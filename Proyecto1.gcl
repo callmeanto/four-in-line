@@ -25,6 +25,7 @@ proc SeguirJugando (in-out siguePartida:true)
         skip
     [] seguirJugando="No" ->
         siguePartida:=False //Lo que me di cuenta aqui es que aunque ponga que es False, jugara una partida mas y luego se saldra, no se si deberia poner un break (No recuerdo si GCL lo tiene)
+    >>seguirJugando
   ]
 
 proc DeterminarGanador (in turno: int, jugada:int, out Ganador:int)
@@ -161,14 +162,14 @@ DesplegarGanador (in Ganador:int)
     fi
 ]
 
-CambiarTurno (in-out turno:int)
+CambiarTurno (in turno:int, out t:int)
 {turno=1 \/ turno=2}
-{turno=1 \/ turno=2}
+{t=1 \/ t=2}
 [
-    if turno=1 -> turno:=2
-    [] turno=2 -> turno:=1
+    if turno=1 -> t:=2
+    [] turno=2 -> t:=1
     fi
-    >>turno
+    >>t
 ]
 
 [   
@@ -187,16 +188,16 @@ CambiarTurno (in-out turno:int)
            siguePartida:= True; 
            inicializarPartida(N,M); 
       do jugarOtra=True /\ siguePartida=True ->  
-           SeguirJugando(siguePartida)  // Este pedazo del codigo es agregado por mi  
+           siguePartida:=SeguirJugando(siguePartida)
            ObtenerJugada(nivel, turno, nombreJugador, jugada[i][j]);          
            if esValida=True ->            
                ReflejarJugada(jugada);            
-               CambiarTurno(turno)         
+               turno:=CambiarTurno(turno)         
            [] esValida=False ->           
                 // Error   
            fi;
            Ganador:=DeterminarGanador(turno, jugada); //Siempre sera Ganador=0 hasta que vea si gano el usuario (Ganador=1) o la computadora (Ganador=2) o se queda igual si es empate
-           DeterminarPartidaTerminada(Ganador, jugada, siguePartida)
+           siguePartida:=DeterminarPartidaTerminada(Ganador, jugada, siguePartida)
        od; 
        DesplegarGanador(Ganador)
     od; 
