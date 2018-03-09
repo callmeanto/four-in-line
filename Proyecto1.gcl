@@ -14,7 +14,7 @@
 }
 
 
-proc SeguirJugando (in-out siguePartida:true)
+proc SeguirJugando (in-out siguePartida:bool)
   {siguePartida=True}
   {siguePartida=True \/ siguePartida=False} //PostCondicion Basico, puede cambiarse si se encuentra uno mejor
   [ 
@@ -25,7 +25,6 @@ proc SeguirJugando (in-out siguePartida:true)
         skip
     [] seguirJugando="No" ->
         siguePartida:=False //Lo que me di cuenta aqui es que aunque ponga que es False, jugara una partida mas y luego se saldra, no se si deberia poner un break (No recuerdo si GCL lo tiene)
-    >>seguirJugando
   ]
 
 proc DeterminarGanador (in turno: int, jugada:int, out Ganador:int)
@@ -39,8 +38,6 @@ proc DeterminarGanador (in turno: int, jugada:int, out Ganador:int)
     Ganador:=LineaDiagonalIzquierda (turno, jugada,Ganador)
     Ganador:=LineaDiagonalDerecha (turno, jugada,Ganador)
     
-    >>Ganador
-
 ]
 
 proc DeterminarPartidaTerminada (in Ganador:int, jugada:int, in-out siguePartida:bool)
@@ -74,7 +71,6 @@ proc DeterminarPartidaTerminada (in Ganador:int, jugada:int, in-out siguePartida
     [] Ganador=2 ->
         siguePartida:=False
     fi
-    >> siguePartida
 ]
 
 proc LineaVertical (in turno:int, jugada:int, in-out Ganador:int) //Se verifica cada casilla, puede mejorarse
@@ -89,8 +85,7 @@ proc LineaVertical (in turno:int, jugada:int, in-out Ganador:int) //Se verifica 
         [] else -> skip 
         fi
         j:=j+1
-    od
-    >>Ganador 
+    od 
 ]
 
 proc LineaHorizontal (in turno:int, jugada:int, in-out Ganador:int) //Se verifica cada casilla, puede mejorarse
@@ -107,7 +102,7 @@ proc LineaHorizontal (in turno:int, jugada:int, in-out Ganador:int) //Se verific
         fi;
         i:=i+1
     od
-    >>Ganador 
+
 ]
 
 proc LineaDiagonalDerecha (in turno:int, jugada:int, in-out Ganador:int) //Se verifica cada casilla, puede mejorarse
@@ -128,7 +123,7 @@ proc LineaDiagonalDerecha (in turno:int, jugada:int, in-out Ganador:int) //Se ve
     [] jugada[0][3]=turno /\ jugada[1][4]=turno /\ jugada[2][5]=turno /\ jugada[3][6]=turno -> Ganador:=turno
     [] else -> skip
     fi;
-    >>Ganador 
+
 ]
 
 proc LineaDiagonalIzquierda (in turno:int, jugada:int, in-out Ganador:int) //Se verifica cada casilla, puede mejorarse
@@ -149,7 +144,7 @@ proc LineaDiagonalIzquierda (in turno:int, jugada:int, in-out Ganador:int) //Se 
     [] jugada[0][3]=turno /\ jugada[1][2]=turno /\ jugada[2][1]=turno /\ jugada[3][0]=turno -> Ganador:=turno
     [] else -> skip
     fi;
-    >>Ganador 
+
 ]
 
 DesplegarGanador (in Ganador:int)
@@ -162,20 +157,19 @@ DesplegarGanador (in Ganador:int)
     fi
 ]
 
-CambiarTurno (in turno:int, out t:int)
+CambiarTurno (in-out turno:int)
 {turno=1 \/ turno=2}
-{t=1 \/ t=2}
-[ var t:int
-    if turno=1 -> t:=2
-    [] turno=2 -> t:=1
+{turno=1 \/ turno=2}
+[
+    if turno=1 -> turno:=2
+    [] turno=2 -> turno:=1
     fi
-    >>t
 ]
 
 ReflejarJugada ( in jugada:int)
 {True}
 {True}
-[   
+[ var UltimaJugada: int
 
     Tablero(Inicio: jugada[0][0], termina: jugada[5][6])
     UltimaJugada:= read(jugada[i][j])
@@ -198,16 +192,16 @@ ReflejarJugada ( in jugada:int)
            siguePartida:= True; 
            inicializarPartida(N,M); 
       do jugarOtra=True /\ siguePartida=True ->  
-           siguePartida:=SeguirJugando(siguePartida)
+           SeguirJugando(siguePartida)
            ObtenerJugada(nivel, turno, nombreJugador, jugada[i][j]);          
            if esValida=True ->            
                ReflejarJugada(jugada);            
-               turno:=CambiarTurno(turno)         
+               CambiarTurno(turno)         
            [] esValida=False ->           
                 // Error   
            fi;
-           Ganador:=DeterminarGanador(turno, jugada); //Siempre sera Ganador=0 hasta que vea si gano el usuario (Ganador=1) o la computadora (Ganador=2) o se queda igual si es empate
-           siguePartida:=DeterminarPartidaTerminada(Ganador, jugada, siguePartida)
+           DeterminarGanador(turno, jugada, Ganador); //Siempre sera Ganador=0 hasta que vea si gano el usuario (Ganador=1) o la computadora (Ganador=2) o se queda igual si es empate
+           DeterminarPartidaTerminada(Ganador, jugada, siguePartida)
        od; 
        DesplegarGanador(Ganador)
     od; 
