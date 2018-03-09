@@ -165,7 +165,7 @@ DesplegarGanador (in Ganador:int)
 CambiarTurno (in turno:int, out t:int)
 {turno=1 \/ turno=2}
 {t=1 \/ t=2}
-[
+[ var t:int
     if turno=1 -> t:=2
     [] turno=2 -> t:=1
     fi
