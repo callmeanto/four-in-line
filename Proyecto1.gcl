@@ -151,6 +151,26 @@ proc LineaDiagonalIzquierda (in turno:int, jugada:int, in-out Ganador:int) //Se 
     >>Ganador 
 ]
 
+DesplegarGanador (in Ganador:int)
+{Ganador=1 \/ Ganador=0 \/ Ganador=2}
+{True}
+[
+    if Ganador=1 -> write("El ganador de la partida es " +NombreJugador+ "!")
+    [] Ganador=2 -> write("El ganador de la partida es el computador!")
+    [] Ganador=0 -> write("La partida termino en empate!")
+    fi
+]
+
+CambiarTurno (in-out turno:int)
+{turno=1 \/ turno=2}
+{turno=1 \/ turno=2}
+[
+    if turno=1 -> turno:=2
+    [] turno=2 -> turno:=1
+    fi
+    >>turno
+]
+
 [   
 
     CONST    N=6,M=7;     
@@ -160,6 +180,7 @@ proc LineaDiagonalIzquierda (in turno:int, jugada:int, in-out Ganador:int) //Se 
              nivel:int;
              siguePartida: bool;
              jugarOtra: bool
+             Ganador:int
    {true}
    jugarOtra:=True;
    do jugarOtra=True -> 
@@ -169,15 +190,15 @@ proc LineaDiagonalIzquierda (in turno:int, jugada:int, in-out Ganador:int) //Se 
            SeguirJugando(siguePartida)  // Este pedazo del codigo es agregado por mi  
            ObtenerJugada(nivel, turno, nombreJugador, jugada[i][j]);          
            if esValida=True ->            
-               ReflejarJugada(jugada[i][j]);            
+               ReflejarJugada(jugada);            
                CambiarTurno(turno)         
            [] esValida=False ->           
                 // Error   
            fi;
-           Ganador:=DeterminarGanador(turno, jugada); //Siempre sera Ganador=0 hasta que vea si gano el usuario (Ganador=1) o la computadora (Ganador=2)
-           siguePartida:=DeterminarPartidaTerminada(Ganador, jugada, siguePartida)
+           Ganador:=DeterminarGanador(turno, jugada); //Siempre sera Ganador=0 hasta que vea si gano el usuario (Ganador=1) o la computadora (Ganador=2) o se queda igual si es empate
+           DeterminarPartidaTerminada(Ganador, jugada, siguePartida)
        od; 
-       //Desplegar ganador de la partida; Finalizar partida: No implementado aun
+       DesplegarGanador(Ganador)
     od; 
     //Desplegar resultados de conjunto de partidas: No implementado aun 
 ]
