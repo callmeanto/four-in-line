@@ -172,6 +172,16 @@ CambiarTurno (in turno:int, out t:int)
     >>t
 ]
 
+ReflejarJugada ( in jugada:int)
+{True}
+{True}
+[   
+
+    Tablero(Inicio: jugada[0][0], termina: jugada[5][6])
+    UltimaJugada:= read(jugada[i][j])
+    ColocarJugada(UltimaJugada, jugada[i][j], Tablero) // ColocarJugada(que cosa, en que lugar, donde se pondra)
+]
+
 [   
 
     CONST    N=6,M=7;     
