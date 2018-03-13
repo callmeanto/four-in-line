@@ -1,5 +1,4 @@
-{
-	
+{	
 	Proyecto1.gcl
 	DESCRIPCIÓN: Este es el algoritmo que sigue el juego Cuatro en línea, que consiste
 	en una matriz 6x7 y dos "fichas" (para 2 jugadores) que tendrán el valor 1 y 2 
@@ -9,20 +8,50 @@
 	Autores:
 	       Br. Pietro Iaia
 	       Br. Antonella Requena
-	Última fecha de modificación: 03/03/2018
+	Última fecha de modificación: 13/03/2018
 
 }
 
-proc inicializarPartida(in N,M: int;out nombreJugador:string,Matrix: array[0..N)[0..M) of int)
+func otraPartida(sigue:bool) -> bool //REVISAR //sigue corresponde a una variable que recibe el bloque del bloque "jugada valida" 
+    // cómo hago para que se ejecute este bloque de código si la jugada es válida?
+    {Precondicion}
+    {Postcondicion}
+    [
+      var jugarOtra : bool;
+    var y : string;
+    write("¿Desea jugar otra partida? Tipee Si o No ")
+    read(y)
+      if y="Si" ->
+         jugarOtra:=True
+      [] y="No" ->
+         jugarOtra:=False
+      fi
+
+      >>jugarOtra
+  ]
+
+proc inicializarPartida(in N,M: int;out nombreJugador:string,Nivel:int,Matrix: array[0..N)[0..M) of int)
      var i,j:int;
      {N>0 /\ M>0}
      {(%forall i,j: 0<=i<N /\ 0<=j<M : Matrix[i][j]=0)}
     [
+    //ENTRADA DE DATOS
      write("Ingrese su nombre: ") ;
      read(nombreJugador) ;
+     write("Indique  el nivel que desea jugar: ");
+     write("Nivel Básico: Tipee 1.");
+     write("Nivel Medio: Tipee 2.");
+     read(Nivel);
+
+     //INICIALIZACION DEL TABLERO
      i:=0;
+     //Invariante y cota
+     {(%forall m,n: 0<=n<i /\ 0<=m<j : Matrix[n][m]=0) /\ 0<=i<=N /\ 0<=j<=M}
+     {cota: N-i}
      do i<N ->
        j:=0;
+       {0<=i<N /\ 0<=j<M (%forall m,n: 0<=n<i-1 /\ 0<=m<j-1 : Matrix[n][m]=0) /\ (%forall m: 0<=m<j : Matrix[i][m]=0) }
+       {cota M-j}
        do j<M ->
          Matrix[i][j]:=0
          ;j:=j+1 
@@ -31,100 +60,101 @@ proc inicializarPartida(in N,M: int;out nombreJugador:string,Matrix: array[0..N)
      od
    ]
 
-proc ObtenerJugada(in n:int,t:int,nombreJugador:string;in-out Matrix: array[0..N)[0..M) )
-     var i,j:int;
+proc ObtenerJugada(in n:int,t:int,nombreJugador:string,N:int,M:int;in-out Matrix: array[0..N)[0..M),out jugada:int)
+     var i,j,filaLlena:int;
+         casillaLlena:bool;
      {(t=1 \/ t=2) /\ (n=1 \/ n=2)}
      {(t=1 /\ Matrix[i][j]=1) \/ (t=2 /\ (%any i,j : 0<=i<N /\ 0<=j<M : Matrix[i][j]=2) )} //Esta postcondicion no garantiza que la casilla del CPU se haya asignado bien OJO
      if t=1 ->
         write("Su turno") ;
+        InicializarPartida(N,M,nombreJugador,n,Matrix[0..N)[0..M) ) 
         write("Por favor, "+nombreJugador+" introduzca una jugada: ") ;
-        read(j) ;
-        validarJugada(Matrix[i][j])
-        if esValida=True ->
-          Matrix[i][j]:=1 ; //i debe tener el valor de la fila de arriba a la ultima que fue ocupada
-        [] esValida=False ->
-           write("La jugada no es valida. Intentelo de nuevo")
-           //No se sabe si hay que hacerlo de forma robusta o abortar el programa
-        fi
+        read(jugada) ;
+        validarJugada(N,M,Matrix[i][j],jugada) //Como le paso la matriz completa?
 
      [] t!=1 -> //decimos t!=1 para efectos practicos de la completitud de las guardias, pues ya habremos chequeado que si t!=1 entonces t=2
         write("Turno del computador") ;
-        if n=1 ->
-           //algoritmo random para colocar la ficha en cualquier sitio que este vacio
-           i:=0;
-           do i<N -> //Aca no lo hace de forma aleatoria pues va a ocuoar la primera casilla que vea vacia (ACOMODAR)
-             j:=0;
-             do j<M ->
-               validarJugada(Matrix[i][j]);
-               if esValida=True ->
-                  Matrix[i][j]:=2
-               [] esValida=False ->
-                  skip
-               fi
-        [] n!=1 -> //decimos n!=1 para efectos practicos de la completitud de las guardias, pues ya habremos chequeado que si n!=1 entonces n=2
+        if n=1 -> //Nivel Basico
+          
+          casillaLlena:=False;
+          do casillaLlena=False ->
+            jugada:=random(0,M-1);
+            i,filaLlena:=N-1,0;
+            do (i>0 /\ casillaLlena=False /\ filaLlena!=N) ->
+              if Matrix[i][jugada]=0 ->
+                 Matrix[i][jugada]:=2;
+                 casillaLlena:=True //Sale del ciclo una vez que asigna
+              [] Matrix[i][jugada]!=0 ->
+                 filaLlena:=filaLlena+1
+              fi
+              ;i:=i-1
+            od
+          od
+
+        [] n!=1 -> //Nivel Medio 
+        //decimos n!=1 para efectos practicos de la completitud de las guardias, pues ya habremos chequeado que si n!=1 entonces n=2
+           
            //algoritmo para colocar la ficha de acuerdo a la jugada anterior (Nivel medio)
+
         fi
      fi
-func validarJugada(Matrix: array[0..N)[0..M) ) -> bool
+
+]
+
+
+proc validarJugada(in N,M:int;in-out Matrix: array[0..N)[0..M), jugada:int ) 
      {Matrix[i][j]=1 \/ Matrix[i][j]=2 \/ Matrix[i][j]=0}
-     {esValida=Matrix[i][j]=0 \/ esValida=Matrix[i][j]=1 \/ esValida=Matrix[i][j]=2} //Pre y post no son las mas adecuadas
-     [
-		var esValida:=bool;
-		if Matrix[i][j]=0 ->
-		   esValida:=True
-		[] Matrix[i][j]!=0 ->
-		    esValida:=False
-		//Meter ifs para verificar casilla extrema inferior y casilla vacia encima de otra ocupada por otra ficha
-
-		>> esValida
-     ]
-func otraPartida(sigue:bool) -> bool
-      {Precondicion}
-      {Postcondicion}
-	  [
-	    var jugarOtra : bool;
-		var y : string;
-		write("¿Desea jugar otra partida? Tipee Si o No ")
-		read(y)
-	    if y="Si" ->
-	       jugarOtra:=True
-	    [] y="No" ->
-	       jugarOtra:=False
-	    fi
-
-	    >>jugarOtra
-	]
-proc ReflejarJugada(in-out Matrix[0..N][0..M])
-{Precondicion}
-{Postcondicion}
+     {esValida=Matrix[i][j]=0 \/ esValida=Matrix[i][j]=1} //Pre y post no son las mas adecuadas CHEQUEAR
   [
-   // reflejar jugada write(Matrix[i][j]) 
+		var esValida,aux,ocupada: bool;
+    var i,j:=int;
+    aux:=False; //esta variable es auxiliar para salir de un ciclo mas adelante
 
-  ]
-func CambiarTurno(t:int) -> int
- {}
- {}
- [ 
-  var turno: int;
-  if t=1 ->
-     turno:=2
-  [] t!=1 ->
-     turno:=1
-  fi
-  >>turno
- ]
+    ocupada:=True;
+    do ocupada=True ->
+      i,filaLlena:=N-1,0;
+      do (i>0 /\ ocupada=True /\ filaLlena!=N) ->
+        if Matrix[i][jugada]=0 ->
+          esValida:=True;
+          Matrix[i][jugada]:=1;
+          ocupada:=False //La casilla no esta ocupada, se sale del ciclo
 
+       [] Matrix[i][jugada]!=0 ->
+          filaLlena:=filaLlena+1
+       fi
+       ;i:=i-1
+     od
+     if filaLlena=N ->
+        esValida=False;
+        write("La jugada no es válida. Por favor, inténtelo de nuevo")
+        write("Recuerde que sólo puede colocar fichas en casillas vacías sobre otras ocupadas y en casillas vacías de la fila extrema inferior")
+     [] filaLlena!=N ->
+        //Caso imposible dado que si filaLlena!=N entonces sigue en el ciclo.
+        skip
+     fi
+    od
+    ]
+
+proc ResultadoFinal()
+
+[
+
+
+
+]
+
+//ALGORITMO PRINCIPAL
 [   
 
     CONST    N=6,M=7;     
     VAR      nombreJugador: string; 
-             jugada: array[0..N)[0..M) of int;
+             jugada: int;
              turno:int;
              nivel:int;
    {true}
    jugarOtra=True;
    do jugarOtra=True -> 
-           inicializarPartida(N,M); 
+           InicializarPartida(N,M); 
       do jugarOtra=True /\ siguePartida=True ->         
            ObtenerJugada(nivel, turno, nombreJugador, jugada[i][j]);          
            if esValida=True ->            
