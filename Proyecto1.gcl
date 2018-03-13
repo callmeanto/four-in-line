@@ -27,31 +27,31 @@ proc SeguirJugando (in-out siguePartida:bool)
         siguePartida:=False //Lo que me di cuenta aqui es que aunque ponga que es False, jugara una partida mas y luego se saldra, no se si deberia poner un break (No recuerdo si GCL lo tiene)
   ]
 
-proc DeterminarGanador (in turno: int, jugada:int, out Ganador:int)
+proc DeterminarGanador (in N:int, M:int, turno:int, Matrix:int, out Ganador:int)
 {turno=1 \/ turno=2}
 {Ganador=0 \/ Ganador=1 \/ Ganador=2}
 [
     Ganador:=0
 
-    Ganador:=LineaVertical (turno, jugada,Ganador)
-    Ganador:=LineaHorizontal (turno, jugada,Ganador)
-    Ganador:=LineaDiagonalIzquierda (turno, jugada,Ganador)
-    Ganador:=LineaDiagonalDerecha (turno, jugada,Ganador)
+    LineaVertical (N, M, turno, Matrix, Ganador)
+    LineaHorizontal (N, M, turno, Matrix, Ganador)
+    LineaDiagonalIzquierda (turno, Matrix, Ganador)
+    LineaDiagonalDerecha (turno, Matrix, Ganador)
     
 ]
 
-proc DeterminarPartidaTerminada (in Ganador:int, jugada:int, in-out siguePartida:bool)
+proc DeterminarPartidaTerminada (in N:int, M:int, Ganador:int, Matrix:int, in-out siguePartida:bool)
 {Ganador=0 \/ Ganador=1 \/ Ganador=2}
 {siguePartida= True \/ siguePartida= False}
-[ var n:int, i:int, j:int
+[ var n,i,j:int 
     n:=0
     i:=0
-    do i<6 ->
+    do i<N ->
         j:=0
-        do j<7 ->
-            if jugada[i][j]=0 ->
+        do j<M ->
+            if Matrix[i][j]=0 ->
                 n:=1
-            [] jugada[i][j]!=0 ->
+            [] Matrix[i][j]!=0 ->
                 skip
             fi;
             j:=j+1
@@ -59,92 +59,92 @@ proc DeterminarPartidaTerminada (in Ganador:int, jugada:int, in-out siguePartida
         i:=i+1
     od;
     if n=1 ->
-        pass
+        skip
     [] n!=1 ->
         siguePartida:=False
     fi;
 
     if Ganador=0 ->
         skip
-    [] Ganador=1 ->
-        siguePartida:=False
-    [] Ganador=2 ->
+    [] Ganador=1 \/ Ganador=2 ->
         siguePartida:=False
     fi
 ]
 
-proc LineaVertical (in turno:int, jugada:int, in-out Ganador:int) //Se verifica cada casilla, puede mejorarse
+proc LineaVertical (in N:int, M:int, turno:int, Matrix:int, in-out Ganador:int)
 {turno=1 \/ turno=2}
 {Ganador=0 \/ Ganador=1 \/ Ganador=2}
-[ var j:int
-    j:=0
-    do j<7 ->
-        if jugada[0][j]=turno /\ jugada[1][j]=turno /\ jugada[2][j]=turno /\ jugada[3][j]=turno -> Ganador:=turno
-        [] jugada[1][j]=turno /\ jugada[2][j]=turno /\ jugada[3][j]=turno /\ jugada[4][j]=turno -> Ganador:=turno
-        [] jugada[2][j]=turno /\ jugada[3][j]=turno /\ jugada[4][j]=turno /\ jugada[5][j]=turno -> Ganador:=turno
-        [] else -> skip 
-        fi
-        j:=j+1
-    od 
+[ var j,i:int
+    i:=0;
+    do i<N-3 ->
+        j:=0
+        do j<M ->
+            if Matrix[i][j]=turno /\ Matrix[i+1][j]=turno /\ Matrix[i+2][j]=turno /\ Matrix[i+3][j]=turno ->
+                Ganador:=turno
+            [] Matrix[i][j]!=turno \/ Matrix[i+1][j]!=turno \/ Matrix[i+2][j]!=turno \/ Matrix[i+3][j]!=turno ->
+                skip
+            fi;
+            j:=j+1
+        od;
+        i:=i+1
+    od
 ]
 
-proc LineaHorizontal (in turno:int, jugada:int, in-out Ganador:int) //Se verifica cada casilla, puede mejorarse
+proc LineaHorizontal (in N:int, M:int, turno:int, Matrix:int, in-out Ganador:int)
 {turno=1 \/ turno=2}
 {Ganador=0 \/ Ganador=1 \/ Ganador=2}
 [ var i:int
+    j:=0
+    do j<M-3 ->
+        i:=0
+        do i<N ->
+            if Matrix[i][j]=turno /\ Matrix[i][j+1]=turno /\ Matrix[i][j+2]=turno /\ Matrix[i][j+3]=turno ->
+                Ganador:=turno
+            [] Matrix[i][j]!=turno \/ Matrix[i][j+1]!=turno \/ Matrix[i][j+2]!=turno \/ Matrix[i][j+3]!=turno ->
+                skip
+            fi;
+            i:=i+1
+        od;
+        j:=j+1
+    od
+]
+
+proc LineaDiagonalDerecha (in turno:int, Matrix:int, in-out Ganador:int)
+{turno=1 \/ turno=2}
+{Ganador=0 \/ Ganador=1 \/ Ganador=2}
+[ var i,j:int
     i:=0
-    do i<6 ->
-        if jugada[i][0]=turno /\ jugada[i][1]=turno /\ jugada[i][2]=turno /\ jugada[i][3]=turno -> Ganador:=turno
-        [] jugada[i][1]=turno /\ jugada[i][2]=turno /\ jugada[i][3]=turno /\ jugada[i][4]=turno -> Ganador:=turno
-        [] jugada[i][2]=turno /\ jugada[i][3]=turno /\ jugada[i][4]=turno /\ jugada[i][5]=turno -> Ganador:=turno
-        [] jugada[i][3]=turno /\ jugada[i][4]=turno /\ jugada[i][5]=turno /\ jugada[i][6]=turno -> Ganador:=turno
-        [] else -> skip
-        fi;
+    do i<3 ->
+        j:=0
+        do j<4 ->
+            if Matrix[i][j]=turno /\ Matrix[i+1][j+1]=turno /\ Matrix[i+2][j+2]=turno /\ Matrix[i+3][j+3]=turno ->
+                Ganador:=turno
+            [] Matrix[i][j]!=turno and Matrix[i+1][j+1]!=turno and Matrix[i+2][j+2]!=turno and Matrix[i+3][j+3]!=turno ->
+                skip
+            fi;
+            j:=j+1
+        od;
         i:=i+1
     od
-
 ]
 
-proc LineaDiagonalDerecha (in turno:int, jugada:int, in-out Ganador:int) //Se verifica cada casilla, puede mejorarse
+proc LineaDiagonalIzquierda (in turno:int, Matrix:int, in-out Ganador:int)
 {turno=1 \/ turno=2}
 {Ganador=0 \/ Ganador=1 \/ Ganador=2}
-[
-    if jugada[0][0]=turno /\ jugada[1][1]=turno /\ jugada[2][2]=turno /\ jugada[3][3]=turno -> Ganador:=turn0
-    [] jugada[1][1]=turno /\ jugada[2][2]=turno /\ jugada[3][3]=turno /\ jugada[4][4]=turno -> Ganador:=turno
-    [] jugada[2][2]=turno /\ jugada[3][3]=turno /\ jugada[4][4]=turno /\ jugada[5][5]=turno -> Ganador:=turno
-    [] jugada[1][0]=turno /\ jugada[2][1]=turno /\ jugada[3][2]=turno /\ jugada[4][3]=turno -> Ganador:=turno
-    [] jugada[2][1]=turno /\ jugada[3][2]=turno /\ jugada[4][3]=turno /\ jugada[5][4]=turno -> Ganador:=turno
-    [] jugada[2][0]=turno /\ jugada[3][1]=turno /\ jugada[4][2]=turno /\ jugada[5][3]=turno -> Ganador:=turno
-    [] jugada[0][1]=turno /\ jugada[1][2]=turno /\ jugada[2][3]=turno /\ jugada[3][4]=turno -> Ganador:=turno
-    [] jugada[1][2]=turno /\ jugada[2][3]=turno /\ jugada[3][4]=turno /\ jugada[4][5]=turno -> Ganador:=turno
-    [] jugada[2][3]=turno /\ jugada[3][4]=turno /\ jugada[4][5]=turno /\ jugada[5][6]=turno -> Ganador:=turno
-    [] jugada[0][2]=turno /\ jugada[1][3]=turno /\ jugada[2][4]=turno /\ jugada[3][5]=turno -> Ganador:=turno
-    [] jugada[1][3]=turno /\ jugada[2][4]=turno /\ jugada[3][5]=turno /\ jugada[4][6]=turno -> Ganador:=turno
-    [] jugada[0][3]=turno /\ jugada[1][4]=turno /\ jugada[2][5]=turno /\ jugada[3][6]=turno -> Ganador:=turno
-    [] else -> skip
-    fi;
-
-]
-
-proc LineaDiagonalIzquierda (in turno:int, jugada:int, in-out Ganador:int) //Se verifica cada casilla, puede mejorarse
-{turno=1 \/ turno=2}
-{Ganador=0 \/ Ganador=1 \/ Ganador=2}
-[
-    if jugada[0][6]=turno /\ jugada[1][5]=turno /\ jugada[2][4]=turno /\ jugada[3][3]=turno -> Ganador:=turno
-    [] jugada[1][5]=turno /\ jugada[2][4]=turno /\ jugada[3][3]=turno /\ jugada[4][2]=turno -> Ganador:=turno
-    [] jugada[2][4]=turno /\ jugada[3][3]=turno /\ jugada[4][2]=turno /\ jugada[5][1]=turno -> Ganador:=turno
-    [] jugada[1][6]=turno /\ jugada[2][5]=turno /\ jugada[3][4]=turno /\ jugada[4][3]=turno -> Ganador:=turno
-    [] jugada[2][5]=turno /\ jugada[3][4]=turno /\ jugada[4][3]=turno /\ jugada[5][2]=turno -> Ganador:=turno
-    [] jugada[2][6]=turno /\ jugada[3][5]=turno /\ jugada[4][4]=turno /\ jugada[5][3]=turno -> Ganador:=turno
-    [] jugada[0][5]=turno /\ jugada[1][4]=turno /\ jugada[2][3]=turno /\ jugada[3][2]=turno -> Ganador:=turno
-    [] jugada[1][4]=turno /\ jugada[2][3]=turno /\ jugada[3][2]=turno /\ jugada[4][1]=turno -> Ganador:=turno
-    [] jugada[2][3]=turno /\ jugada[3][2]=turno /\ jugada[4][1]=turno /\ jugada[5][0]=turno -> Ganador:=turno
-    [] jugada[0][4]=turno /\ jugada[1][3]=turno /\ jugada[2][2]=turno /\ jugada[3][1]=turno -> Ganador:=turno
-    [] jugada[1][3]=turno /\ jugada[2][2]=turno /\ jugada[3][1]=turno /\ jugada[4][0]=turno -> Ganador:=turno
-    [] jugada[0][3]=turno /\ jugada[1][2]=turno /\ jugada[2][1]=turno /\ jugada[3][0]=turno -> Ganador:=turno
-    [] else -> skip
-    fi;
-
+[ var i,j:int
+    i:=0
+    do i<3 ->
+        j:=6
+        do j>2 ->
+            if Matrix[i][j]=turno /\ Matrix[i+1][j-1]=turno /\ Matrix[i+2][j-2]=turno /\ Matrix[i+3][j-3]=turno ->
+                Ganador:=turno
+            [] Matrix[i][j]!=turno \/ Matrix[i+1][j-1]!=turno \/ Matrix[i+2][j-2]!=turno \/ Matrix[i+3][j-3]!=turno ->
+                skip
+            fi;
+            j=j-1
+        od;
+        i=i+1
+    od
 ]
 
 DesplegarGanador (in Ganador:int)
@@ -171,9 +171,9 @@ ReflejarJugada ( in jugada:int)
 {True}
 [ var UltimaJugada: int
 
-    Tablero(Inicio: jugada[0][0], termina: jugada[5][6])
-    UltimaJugada:= read(jugada[i][j])
-    ColocarJugada(UltimaJugada, jugada[i][j], Tablero) // ColocarJugada(que cosa, en que lugar, donde se pondra)
+    Tablero(Inicio: Matrix[0][0], termina: Matrix[5][6])
+    UltimaJugada:= read(jugada)
+    ColocarJugada(UltimaJugada, jugada, Tablero) // ColocarJugada(que cosa, en que lugar, donde se pondra)
 ]
 
 [   
@@ -192,7 +192,7 @@ ReflejarJugada ( in jugada:int)
            siguePartida:= True; 
            inicializarPartida(N,M); 
       do jugarOtra=True /\ siguePartida=True ->  
-           SeguirJugando(siguePartida)
+           SeguirJugando(siguePartida);
            ObtenerJugada(nivel, turno, nombreJugador, jugada[i][j]);          
            if esValida=True ->            
                ReflejarJugada(jugada);            
@@ -200,8 +200,8 @@ ReflejarJugada ( in jugada:int)
            [] esValida=False ->           
                 // Error   
            fi;
-           DeterminarGanador(turno, jugada, Ganador); //Siempre sera Ganador=0 hasta que vea si gano el usuario (Ganador=1) o la computadora (Ganador=2) o se queda igual si es empate
-           DeterminarPartidaTerminada(Ganador, jugada, siguePartida)
+           DeterminarGanador(N, M, turno, Matrix, Ganador);
+           DeterminarPartidaTerminada(N, M, Ganador, Matrix, siguePartida)
        od; 
        DesplegarGanador(Ganador)
     od; 
