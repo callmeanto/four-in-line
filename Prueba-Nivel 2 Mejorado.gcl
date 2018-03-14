@@ -54,11 +54,6 @@ proc DeterminarLinea(in Matrix: array[0..N)[0..M) of int, p:int, q:int ; in-out 
 {Linea=0 \/ Linea=1 \/ Linea=2 \/ Linea=3 \/ Linea=4 \/ Linea=5}
 [ var Valida0, Valida1, Valida2, Valida3, Valida4, SigueFila :bool  
 
-    DeterminarJugadaValida(Matrix, p, q+1, Valida0)  
-    DeterminarJugadaValida(Matrix, p, q-1, Valida1)  
-    DeterminarJugadaValida(Matrix, p-1, q, Valida2)             //Verfica si cada posible fila tiene ficha abajo. y luego en el if de abajo lo toma en cuenta
-    DeterminarJugadaValida(Matrix, p-1, q+1, Valida3) 
-    DeterminarJugadaValida(Matrix, p-1, q-1, Valida4) 
     SigueFila:=False;
 
     if Linea=0 ->
@@ -79,6 +74,11 @@ proc DeterminarLinea(in Matrix: array[0..N)[0..M) of int, p:int, q:int ; in-out 
         skip
     [] SigueFila=False -> 
         if p!=0 ->
+            DeterminarJugadaValida(Matrix, p, q+1, Valida0);
+            DeterminarJugadaValida(Matrix, p, q-1, Valida1);
+            DeterminarJugadaValida(Matrix, p-1, q, Valida2);          
+            DeterminarJugadaValida(Matrix, p-1, q+1, Valida3);
+            DeterminarJugadaValida(Matrix, p-1, q-1, Valida4);
             if Valida0=True ->
                 Linea:=0
             [] Valida1=True ->
@@ -93,12 +93,14 @@ proc DeterminarLinea(in Matrix: array[0..N)[0..M) of int, p:int, q:int ; in-out 
                 Linea:=5
             fi
         [] p=0 ->
-            if Linea=0 /\ Valida0=True ->
-            Linea:=0
-            [] Linea=1 /\ Valida0=True ->
-            Linea:=1
+            DeterminarJugadaValida(Matrix, p, q+1, Valida0);
+            DeterminarJugadaValida(Matrix, p, q-1, Valida1);
+            if Valida0=True ->
+                Linea:=0
+            [] Valida1=True ->
+                Linea:=1
             [] Valida0=False /\ Valida1=False ->
-            Linea:=5
+                Linea:=5
             fi
         fi
     fi
