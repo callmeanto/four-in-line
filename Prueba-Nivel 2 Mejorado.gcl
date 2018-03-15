@@ -38,7 +38,7 @@ proc ObtenerJugada(in turno:int, nivel:int; in-out Matrix: array [0,N) of int, p
                 Valida:=False
                 do Valida=False ->
                     p,q:=Random.Randint(5), Random.Randint(6)
-                    DeterminarJugadaValida(Matrix, p, q, Valida)
+                    DeterminarJugadaValida(Matrix, p, q, Valida)       //Valida es una variable local
                     if Valida=False ->
                         skip
                     [] Valida=True ->
@@ -54,12 +54,17 @@ proc DeterminarLinea(in Matrix: array[0..N)[0..M) of int, p:int, q:int ; in-out 
 {Linea=0 \/ Linea=1 \/ Linea=2 \/ Linea=3 \/ Linea=4 \/ Linea=5}
 [ var Valida0, Valida1, Valida2, Valida3, Valida4, SigueFila :bool  
 
+    DeterminarJugadaValida(Matrix, p, q+1, Valida0)  
+    DeterminarJugadaValida(Matrix, p, q-1, Valida1)  
+    DeterminarJugadaValida(Matrix, p-1, q, Valida2)             //Verfica si cada posible fila tiene ficha abajo. y luego en el if de abajo lo toma en cuenta
+    DeterminarJugadaValida(Matrix, p-1, q+1, Valida3) 
+    DeterminarJugadaValida(Matrix, p-1, q-1, Valida4) 
     SigueFila:=False;
 
     if Linea=0 ->
         DeterminarJugadaValida (Matrix, p, q+1, SigueFila)
     [] Linea=1 -> 
-        DeterminarJugadaValida (Matrix, p, q-1, SigueFila)
+        DeterminarJugadaValida (Matrix, p, q-1, SigueFila) 
     [] Linea=2 ->
         DeterminarJugadaValida (Matrix, p-1, q, SigueFila)
     [] Linea=3 ->
@@ -73,35 +78,18 @@ proc DeterminarLinea(in Matrix: array[0..N)[0..M) of int, p:int, q:int ; in-out 
     if SigueFila=True ->
         skip
     [] SigueFila=False -> 
-        if p!=0 ->
-            DeterminarJugadaValida(Matrix, p, q+1, Valida0);
-            DeterminarJugadaValida(Matrix, p, q-1, Valida1);
-            DeterminarJugadaValida(Matrix, p-1, q, Valida2);          
-            DeterminarJugadaValida(Matrix, p-1, q+1, Valida3);
-            DeterminarJugadaValida(Matrix, p-1, q-1, Valida4);
-            if Valida0=True ->
-                Linea:=0
-            [] Valida1=True ->
-                Linea:=1
-            [] Valida2=True ->
-                Linea:=2
-            [] Valida3=True ->
-                Linea:=3
-            [] Valida4=True ->
-                Linea:=4
-            [] Valida0=False /\ Valida1=False /\ Valida2=False /\ Valida3=False /\ Valida4=False ->                                           
-                Linea:=5
-            fi
-        [] p=0 ->
-            DeterminarJugadaValida(Matrix, p, q+1, Valida0);
-            DeterminarJugadaValida(Matrix, p, q-1, Valida1);
-            if Valida0=True ->
-                Linea:=0
-            [] Valida1=True ->
-                Linea:=1
-            [] Valida0=False /\ Valida1=False ->
-                Linea:=5
-            fi
+        if Valida0=True ->
+            Linea:=0
+        [] Valida1=True ->
+            Linea:=1
+        [] Valida2=True ->
+            Linea:=2
+        [] Valida3=True ->
+            Linea:=3
+        [] Valida4=True ->
+            Linea:=4
+        [] Valida0=False /\ Valida1=False /\ Valida2=False /\ Valida3=False /\ Valida4=False ->                                           
+            Linea:=5
         fi
     fi
 ]
