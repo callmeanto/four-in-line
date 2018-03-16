@@ -308,7 +308,7 @@ proc CambiarTurno(in-out turno:int)
     fi
 ]
 
-proc DeterminarGanador(in N:int, M:int, turno:int, Matrix:int, out Ganador:int)
+proc DeterminarGanador(in N:int, M:int, turno:int, Matrix: array[0..N)[0..M); out Ganador:int)
 {turno=1 \/ turno=2}
 {Ganador=0 \/ Ganador=1 \/ Ganador=2}
 [
@@ -424,13 +424,33 @@ proc DesplegarGanador(in Ganador:int)
     fi
 ]
 
-proc DesplegarResultadoFinal()
+proc ContadorGanadorPartida(in ganador:int;out ganador0,ganador1,ganador2:int) //Este procedimiento cuenta la cantidad de partidas ganadas por cada jugador
+{ganador=0 \/ ganador=1 \/ ganador=2}
+{ganador0=(%sigma i: 0<=i< /\ : 1)}
+
+ VAR
+[
+ if ganador=0 ->
+    ganador0:=ganador0+1;
+ [] ganador=1 ->
+    ganador1:=ganador1+1;
+ [] ganador=2 ->
+    ganador2:=ganador2+1;
+ fi
+]
+
+proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:string)
 {}
 {}
 
 [
-
-
+ write("El resultado final es:");
+ write("Total partidas ganadas por "+nombreJugador);
+ write(ganador1);
+ write("Total partidas ganadas por la computadora ");
+ write(ganador2);
+ write("Total partidas empatadas");
+ write(ganador0)
 ]
 
 
@@ -451,8 +471,9 @@ proc DesplegarResultadoFinal()
    esValida:bool;
    siguePartida:bool;
    jugarOtra:bool;
+   ganador0,ganador1,ganador2:int;
 
-   {...precondiciones ...}
+   {N>0 /\ M>0}
    jugarOtra:=True;
    {inv: ,cota:}
    do jugarOtra -> 
@@ -469,13 +490,14 @@ proc DesplegarResultadoFinal()
 	        skip
 	     fi 
 	     DeterminarGanador(N,M,turno,Tablero,ganador);
+	     ContarGanadorPartida(ganador,ganador0,ganador1,ganador2);
 	     DeterminarPartidaTerminada(N,M,ganador,Tablero,siguePartida);
 	     SeguirJugando(siguePartida)
 	   od; 
 	   DesplegarGanador(ganador); 
 	   otraPartida(jugarOtra);       
    od; 
-   DesplegarResultadoFinal();
+   DesplegarResultadoFinal(ganador0,ganador1,ganador2);
 
 
    ]
