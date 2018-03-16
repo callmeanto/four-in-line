@@ -31,6 +31,8 @@
 # q: int // Variable que contendra la ultima columna jugada por el CPU en el nivel medio
 
  
+ #Como solo se debe regresar un print con un mensaje que diga lo que hace cada subprograma, no se le coloco ningun return. Pero si se coloco que tipo de
+ #variable regresa a cada subprograma
 def DeterminarPartidaTerminada (N:int, M:int, Ganador:int, Matrix:int, siguePartida:bool) -> bool:
 
  print("Este proceso determina si la partida termino")
