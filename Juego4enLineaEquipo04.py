@@ -37,32 +37,47 @@
  
  #Como solo se debe regresar un print con un mensaje que diga lo que hace cada subprograma, no se le coloco ningun return. Pero si se coloco que tipo de
  #variable regresa a cada subprograma
+
 def DeterminarPartidaTerminada (N:int, M:int, Ganador:int, Matrix:int, siguePartida:bool) -> bool:
+	#Precondicion: N>0 and M>0 and (Ganador=0 or Ganador=1 or Ganador=2)
+	#Postcondicion: siguePartida= True or siguePartida= False
 
  print("Este proceso determina si la partida termino")
 
 def DeterminarGanador (N:int, M:int, turno: int, Matrix:int, Ganador:int) -> int:
+	#Precondicion: turno=1 or turno=2
+	#Postcondicion: Ganador=0 or Ganador=1 or Ganador=2
  
  print("Este proceso determina el Ganador de la partida, usara los subprogramas LineaHorizontal, LineaVertical, LineaDiagonalIzquierda, LineaDiagonalDerecha")
 
 def LineaVertical(N:int, M:int, turno:int, Matrix:int, Ganador:int) -> int:
+	#Precondicion: turno=1 or turno=2
+	#Postcondicion: Ganador=0 or Ganador=1 or Ganador=2
  
  print("Este proceso recorre la matriz y verifica si hay una linea Vertical ganadora (Usada por Determinar Ganador)")
 
 
 def LineaHorizontal(N:int, M:int, turno:int, Matrix:int, Ganador:int) -> int:
+	#Precondicion: turno=1 or turno=2
+	#Postcondicion: Ganador=0 or Ganador=1 or Ganador=2
  
  print("Este proceso recorre la matriz y verifica si hay una linea Horizontal ganadora (Usada por Determinar Ganador)")
 
 def LineaDiagonalDerecha(turno:int, Matrix:int, Ganador:int) -> int:
+	#Precondicion: turno=1 or turno=2
+	#Postcondicion: Ganador=0 or Ganador=1 or Ganador=2
  
  print("Este proceso recorre la matriz y verifica si hay una linea Diagonal Derecha ganadora (Usada por Determinar Ganador)")
 
 def LineaDiagonalIzquierda (turno:int, Matrix:int, Ganador:int) -> int:
+	#Precondicion: turno=1 or turno=2
+	#Postcondicion: Ganador=0 or Ganador=1 or Ganador=2
  
  print("Este proceso recorre la matriz y verifica si hay una linea Diagonal Izquierda ganadora (Usada por Determinar Ganador)")
  
 def SeguirJugando (siguePartida:bool) -> bool:
+	#Precondicion: siguePartida=True
+	#Postcondicion: siguePartida=True or siguePartida=False
 
  print("Este proceso determina si se desea seguir jugando o no (Se le pregunta al jugador luego de cada jugada)")
  siguePartida=False #Esto se le agrega para probar el flujo del programa y no quede dentro del bucle
@@ -70,10 +85,14 @@ def SeguirJugando (siguePartida:bool) -> bool:
  return siguePartida
  
 def DesplegarGanador(Ganador:int) -> 'Void': 
+	#Precondicion: Ganador=1 or Ganador=0 or Ganador=2
+	#Postcondicion: True
  
  print("Este proceso Muestra en pantalla el ganador de la partida luego de que esta termine")
  
 def otraPartida(jugarOtra:bool, PrimeraPartida:bool) -> bool:
+	#Precondicion: jugarOtra=True
+	#Postcondicion: jugarOtra=True or jugarOtra=False
 
  print("Este proceso Pregunta el jugador, luego de que termina una partida, si se desea jugar otra")
  jugarOtra=False #Esto se le agrega para probar el flujo del programa y no quede dentro del bucle
@@ -81,6 +100,8 @@ def otraPartida(jugarOtra:bool, PrimeraPartida:bool) -> bool:
  return jugarOtra
 
 def ReflejarJugada(i:int, jugada:int, turno:int, Matrix:int) -> 'Void':
+	#Precondicion: turno=1 or turno=2
+	#Postcondicion: True
 
  print("Refleja en pantalla la jugada hecha por el CPU y el jugador")
 
@@ -91,6 +112,8 @@ def CambiarTurno(turno:int) -> int:
  print("Cambia el turno al otro jugador")
 
 def validarJugada(N: int, M:int, Matrix:int, jugada:int, esValida:bool, i:int):
+	#Precondicion: N>0 and M>0
+	#Postcondicion: esValida=0 or esValida=1
 
  print("Este proceso determinara si la Jugada del jugador es valida y la colocara en la matriz")
  esValida=False #Esto se le agrega para probar el flujo del programa y no quede dentro del bucle
@@ -98,28 +121,40 @@ def validarJugada(N: int, M:int, Matrix:int, jugada:int, esValida:bool, i:int):
  return esValida
 
 def InicializarPartida(Ganador:int, N:int, M:int,Linea:int , p:int, q:int,JugadaPrimeraVez:bool, nombreJugador:str ,Nivel:int, Matrix:int, turno:int):
+	#Precondicion: N>0 and M>0
+	#Postcondicion: (%forall i,j: 0<=i<N and 0<=j<M : Matrix[i][j]=0)
     
  print("Este proceso inicializara la partida, poniendo el tablero vacio, e inicializando todas las variables que se necesitara en el nuevo juego")
 
 def ObtenerJugada(nivel:int, turno:int, nombreJugador:str, N:int, M:int, Matrix:int, JugadaPrimeraVez:bool, Linea:int, p:int, q:int, jugada:int):
+	#Precondicion: N>0 and M>0 and (turno=1 or turno=2) and (nivel=1 or nivel=2)
+	#Postcondicion: (%exist i: 0<=i<=5: Linea=i) and 0<=p<N and 0<=q<M and 0<=jugada<M
 
  print("Este proceso es donde el jugador y el CPU decidiran la jugada que quieren hacer. Si se selecciona el nivel medio, el CPU usa de otros subprogramas (mencionados abajo) para hacer su jugada y determinar si es valida")
  
 
 def DeterminarLinea(N:int, M:int, Matrix:int, p:int, q:int, Linea:int) -> int:
+	#Precondicion: (%exist i: 0<=i<=5: Linea=i)
+	#Postcondicion: (%exist i: 0<=i<=5: Linea=i)
 
  print("Este proceso determinara la Linea que el CPU desea jugar cuando juegue en el nivel medio")
 
 
 def DeterminarJugadaValida (N:int, M:int, Matrix:int, i:int, j:int, Valida:bool) -> bool:
+	#Precondicion: N>0 and M>0
+	#Postcondicion: Valida=False \/ Valida=True
  
  print("Este proceso es usado por DeterminarLinea para verificar si, al escoger una linea, puede colocar la ficha en ese espacio (Solo se usaria si el CPU se le asigna el nivel medio)")
 
 def ResaltarLinea(a:int, b:int, c:int, d:int) -> 'Void':
+	#Precondicion: (%forall i: i={a,b,c,d}: i=1 \/ i=2 )
+	#Poscondicion: True
  
  print("Si se encuentra una Linea ganadora, la resalta (Usada por LineaHorizontal, LineaVertical, LineaDiagonalDerecha y LineaDiagonalIzquierda)")
 
 def DesplegarResultadoFinal(Ganador0:int, Ganador1:int, Ganador2:int) -> 'Void':
+	#Precondicion: ganador1>=0 and ganador2>=0 and ganador0>=0
+	#Postcondicion: True
 
  print("Este proceso desplegara en pantalla la cantidad de veces que el jugador ha ganado, la cantidad de veces que gano el CPU y cuantas veces quedo en empate")
 
