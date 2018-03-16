@@ -130,7 +130,7 @@ while jugarOtra=True:
 	    siguePartida=DeterminarPartidaTerminada(N,M,ganador,Tablero,siguePartida) 
 	    siguePartida=SeguirJugando(siguePartida) 
 
-	DesplegarGanador(ganador) 
+	DesplegarGanador(Ganador) 
 	jugarOtra=otraPartida(jugarOtra)    
 
 DesplegarResultadoFinal() 
