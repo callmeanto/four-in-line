@@ -33,104 +33,112 @@
  
 def DeterminarPartidaTerminada (N:int, M:int, Ganador:int, Matrix:int, siguePartida:bool) -> bool:
 
- #Este proceso determina si la partida termino
+ print("Este proceso determina si la partida termino")
 
 def DeterminarGanador (N:int, M:int, turno: int, Matrix:int, Ganador:int) -> int:
  
- #Este proceso determina el Ganador de la partida, usara los subprogramas LineaHorizontal, LineaVertical, LineaDiagonalIzquierda, LineaDiagonalDerecha
+ print("Este proceso determina el Ganador de la partida, usara los subprogramas LineaHorizontal, LineaVertical, LineaDiagonalIzquierda, LineaDiagonalDerecha")
 
 def LineaVertical(N:int, M:int, turno:int, Matrix:int, Ganador:int) -> int:
  
- #Este proceso recorre la matriz y verifica si hay una linea Vertical ganadora (Usada por Determinar Ganador)
+ print("Este proceso recorre la matriz y verifica si hay una linea Vertical ganadora (Usada por Determinar Ganador)")
 
 
 def LineaHorizontal(N:int, M:int, turno:int, Matrix:int, Ganador:int) -> int:
  
- #Este proceso recorre la matriz y verifica si hay una linea Horizontal ganadora (Usada por Determinar Ganador)
+ print("Este proceso recorre la matriz y verifica si hay una linea Horizontal ganadora (Usada por Determinar Ganador)")
 
 def LineaDiagonalDerecha(turno:int, Matrix:int, Ganador:int) -> int:
  
- #Este proceso recorre la matriz y verifica si hay una linea Diagonal Derecha ganadora (Usada por Determinar Ganador)
+ print("Este proceso recorre la matriz y verifica si hay una linea Diagonal Derecha ganadora (Usada por Determinar Ganador)")
 
 def LineaDiagonalIzquierda (turno:int, Matrix:int, Ganador:int) -> int:
  
- #Este proceso recorre la matriz y verifica si hay una linea Diagonal Izquierda ganadora (Usada por Determinar Ganador)
+ print("Este proceso recorre la matriz y verifica si hay una linea Diagonal Izquierda ganadora (Usada por Determinar Ganador)")
  
 def SeguirJugando (siguePartida:bool) -> bool:
 
- #Este proceso determina si se desea seguir jugando o no (Se le pregunta al jugador luego de cada jugada)
+ print("Este proceso determina si se desea seguir jugando o no (Se le pregunta al jugador luego de cada jugada)")
  
 def DesplegarGanador(Ganador:int) -> 'Void': 
  
- #Este proceso Muestra en pantalla el ganador de la partida luego de que esta termine
+ print("Este proceso Muestra en pantalla el ganador de la partida luego de que esta termine")
  
 def otraPartida(jugarOtra:bool) -> bool:
 
- #Este proceso Pregunta el jugador, luego de que termina una partida, si se desea jugar otra
+ print("Este proceso Pregunta el jugador, luego de que termina una partida, si se desea jugar otra")
 
 def ReflejarJugada(i:int, jugada:int, turno:int, Matrix:int) -> 'Void':
 
- #Refleja en pantalla la jugada hecha por el CPU y el jugador
+ print("Refleja en pantalla la jugada hecha por el CPU y el jugador")
 
 def CambiarTurno(turno:int) -> int:
 
- #Cambia el turno al otro jugador 
+ print("Cambia el turno al otro jugador")
 
 def validarJugada(N: int, M:int, Matrix:int, jugada:int, esValida:bool, i:int):
 
- #Este proceso determinara si la Jugada del jugador es valida y la colocara en la matriz
+ print("Este proceso determinara si la Jugada del jugador es valida y la colocara en la matriz")
 
 def InicializarPartida(N:int, M:int,Linea:int , p:int, q:int,JugadaPrimeraVez:bool, nombreJugador:str ,Nivel:int, Matrix:int):
     
- #Este proceso inicializara la partida, poniendo el tablero vacio, e inicializando todas las variables que se necesitara en el nuevo juego
+ print("Este proceso inicializara la partida, poniendo el tablero vacio, e inicializando todas las variables que se necesitara en el nuevo juego")
 
 def ObtenerJugada(nivel:int, turno:int, nombreJugador:str, N:int, M:int, Matrix:int, JugadaPrimeraVez:bool, Linea:int, p:int, q:int, jugada:int):
 
- #Este proceso es donde el jugador y el CPU decidiran la jugada que quieren hacer. Si se selecciona el nivel medio, el CPU usa de otros 
- #subprogramas (mencionados abajo) para hacer su jugada y determinar si es valida
+ print("Este proceso es donde el jugador y el CPU decidiran la jugada que quieren hacer. Si se selecciona el nivel medio, el CPU usa de otros subprogramas (mencionados abajo) para hacer su jugada y determinar si es valida")
+ 
 
 def DeterminarLinea(N:int, M:int, Matrix:int, p:int, q:int, Linea:int) -> int:
 
- #Este proceso determinara la Linea que el CPU desea jugar cuando juegue en el nivel medio 
+ print("Este proceso determinara la Linea que el CPU desea jugar cuando juegue en el nivel medio")
 
 
 def DeterminarJugadaValida (N:int, M:int, Matrix:int, i:int, j:int, Valida:bool) -> bool:
  
- #Este proceso es usado por DeterminarLinea para verificar si, al escoger una linea, puede colocar la ficha en ese espacio (Solo se usaria si el CPU se
- #le asigna el nivel medio)
+ print("Este proceso es usado por DeterminarLinea para verificar si, al escoger una linea, puede colocar la ficha en ese espacio (Solo se usaria si el CPU se le asigna el nivel medio)")
 
 def ResaltarLinea(a:int, b:int, c:int, d:int) -> 'Void':
  
- #Si se encuentra una Linea ganadora, la resalta (Usada por LineaHorizontal, LineaVertical, LineaDiagonalDerecha y LineaDiagonalIzquierda)
+ print("Si se encuentra una Linea ganadora, la resalta (Usada por LineaHorizontal, LineaVertical, LineaDiagonalDerecha y LineaDiagonalIzquierda)")
 
-def DesplegarResultadoFinal() -> 'Void':
+def DesplegarResultadoFinal(Ganador:int) -> 'Void':
 
- #Este proceso desplegara en pantalla la cantidad de veces que el jugador ha ganado, la cantidad de veces que gano el CPU y cuantas veces quedo en empate
+ print("Este proceso desplegara en pantalla la cantidad de veces que el jugador ha ganado, la cantidad de veces que gano el CPU y cuantas veces quedo en empate")
+
+#Variables declaradas
+N=6
+M=7
+nombreJugador="Nombre"
+Tablero=[[0 for j in range(M)] for i in range(N)]
+nivel=0
+i=0
+turno=0
+JugadaPrimeraVez=True
+Linea=5
+jugada=0
+Ganador=0
+esValida=True
+p=0
+q=0
 
 
 jugarOtra=True
-while jugarOtra=True:
-	Linea, p, q, JugadaPrimeraVez, nombreJugador, nivel, Tablero= InicializarPartida(N,M,Linea,p,q,JugadaPrimeraVez,nombreJugador,nivel,Tablero) #/
+while jugarOtra==True:
+	InicializarPartida(N,M,Linea,p,q,JugadaPrimeraVez,nombreJugador,nivel,Tablero) 
 	siguePartida=True
-	while siguePartida=True: 
-
-        if nivel=1:       
-	        Tablero, jugada= ObtenerJugada(nivel,turno,nombreJugador,N,M,Tablero,JugadaPrimeraVez,Linea,p,q,jugada)                #Hago esto ya que si se escoge
-	        Tablero, esValida,i=validarJugada(N,M,Talero,jugada,esValida,i)                                                        #el nivel 1 no se necesitara de
-        elif nivel=2:                                                                                                              #Algunas variables             
-            Tablero, JugadaPrimeraVez, Linea, p, q, jugada= ObtenerJugada(nivel,turno,nombreJugador,N,M,Tablero,JugadaPrimeraVez,Linea,p,q,jugada) 
-            Tablero, esValida,i=validarJugada(N,M,Talero,jugada,esValida,i)
-
-	    if esValida=True:            
-	        ReflejarJugada(i,jugada,turno,Tablero)            
-	        turno=CambiarTurno(turno)        
-	    elif esValida=False:           
-	        pass
-	    Ganador=DeterminarGanador(N,M,turno,Tablero,Ganador) 
-	    siguePartida=DeterminarPartidaTerminada(N,M,ganador,Tablero,siguePartida) 
-	    siguePartida=SeguirJugando(siguePartida) 
-
+	while siguePartida==True:                                                                                                                                                                      
+		ObtenerJugada(nivel, turno, nombreJugador, N, M, Tablero, JugadaPrimeraVez, Linea, p, q, jugada) 
+		validarJugada(N,M,Tablero,jugada,esValida,i)
+		if esValida==True:            
+			ReflejarJugada(i,jugada,turno,Tablero)            
+			turno=CambiarTurno(turno)       
+		elif esValida==False:           
+			pass
+		DeterminarGanador(N,M,turno,Tablero,Ganador) 
+		DeterminarPartidaTerminada(N,M,Ganador,Tablero,siguePartida) 
+		SeguirJugando(siguePartida) 
 	DesplegarGanador(Ganador) 
-	jugarOtra=otraPartida(jugarOtra)    
+	otraPartida(jugarOtra)  
+DesplegarResultadoFinal(Ganador) 
 
-DesplegarResultadoFinal() 
