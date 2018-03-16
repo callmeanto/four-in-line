@@ -29,6 +29,10 @@
 # jugarOtra: bool // Variable para determinar si se desea jugar otra partida o no
 # p :int // Variable que contendra la ultima fila jugada por el CPU en el nivel medio
 # q: int // Variable que contendra la ultima columna jugada por el CPU en el nivel medio
+# Ganador0:int // Cuenta cuantas veces ha quedado en empate la partida
+# Ganador1:int // Cuenta cuantas veces ha ganado el Jugador
+# Ganador2:int // Cuenta cuantas veces ha ganado el computador
+# PrimeraPartida: bool // Esta variable verifica si es la primera partida que se juega entre el computador y el jugador
 
  
  #Como solo se debe regresar un print con un mensaje que diga lo que hace cada subprograma, no se le coloco ningun return. Pero si se coloco que tipo de
@@ -69,7 +73,7 @@ def DesplegarGanador(Ganador:int) -> 'Void':
  
  print("Este proceso Muestra en pantalla el ganador de la partida luego de que esta termine")
  
-def otraPartida(jugarOtra:bool) -> bool:
+def otraPartida(jugarOtra:bool, PrimeraPartida:bool) -> bool:
 
  print("Este proceso Pregunta el jugador, luego de que termina una partida, si se desea jugar otra")
  jugarOtra=False #Esto se le agrega para probar el flujo del programa y no quede dentro del bucle
@@ -81,6 +85,8 @@ def ReflejarJugada(i:int, jugada:int, turno:int, Matrix:int) -> 'Void':
  print("Refleja en pantalla la jugada hecha por el CPU y el jugador")
 
 def CambiarTurno(turno:int) -> int:
+	#Precondicion: turno=1 or turno=2
+	#Postcondicion: turno=1 or turno=2
 
  print("Cambia el turno al otro jugador")
 
@@ -91,7 +97,7 @@ def validarJugada(N: int, M:int, Matrix:int, jugada:int, esValida:bool, i:int):
 
  return esValida
 
-def InicializarPartida(N:int, M:int,Linea:int , p:int, q:int,JugadaPrimeraVez:bool, nombreJugador:str ,Nivel:int, Matrix:int):
+def InicializarPartida(Ganador:int, N:int, M:int,Linea:int , p:int, q:int,JugadaPrimeraVez:bool, nombreJugador:str ,Nivel:int, Matrix:int, turno:int):
     
  print("Este proceso inicializara la partida, poniendo el tablero vacio, e inicializando todas las variables que se necesitara en el nuevo juego")
 
@@ -113,9 +119,15 @@ def ResaltarLinea(a:int, b:int, c:int, d:int) -> 'Void':
  
  print("Si se encuentra una Linea ganadora, la resalta (Usada por LineaHorizontal, LineaVertical, LineaDiagonalDerecha y LineaDiagonalIzquierda)")
 
-def DesplegarResultadoFinal(Ganador:int) -> 'Void':
+def DesplegarResultadoFinal(Ganador0:int, Ganador1:int, Ganador2:int) -> 'Void':
 
  print("Este proceso desplegara en pantalla la cantidad de veces que el jugador ha ganado, la cantidad de veces que gano el CPU y cuantas veces quedo en empate")
+
+def ContarGanadorPartida(Ganador, Ganador0, Ganador1, Ganador2) -> int:
+	#Precondicion: Ganador=0 or Ganador=1 or Ganador=2
+	#Postcondicion: Ganador0>=0 and Ganador1>=0 and Ganador2>=0
+
+ print("Cuenta cuantas veces ha quedado en empate, cuantas veces Gano el jugador y cuantas veces gano la computadora")
 
 #Variables declaradas / Se les puso un valor cualquiera solo para declararlas, dentro del programa en Inicializar partida se les colocara sus verdaderos valores
 N=6
@@ -134,9 +146,10 @@ p=0
 q=0
 
 
-jugarOtra=True
+jugarOtra, PrimeraPartida=True,True
+Ganador0, Ganador1, Ganador2=0,0,0
 while jugarOtra==True:
-	InicializarPartida(N,M,Linea,p,q,JugadaPrimeraVez,nombreJugador,nivel,Tablero) 
+	InicializarPartida(Ganador,N,M,Linea,p,q,JugadaPrimeraVez,nombreJugador,nivel,Tablero, turno) 
 	siguePartida=True
 	while siguePartida==True:                                                                                                                                                                      
 		ObtenerJugada(nivel, turno, nombreJugador, N, M, Tablero, JugadaPrimeraVez, Linea, p, q, jugada) 
@@ -150,6 +163,7 @@ while jugarOtra==True:
 		DeterminarPartidaTerminada(N,M,Ganador,Tablero,siguePartida) 
 		siguePartida=SeguirJugando(siguePartida) 
 	DesplegarGanador(Ganador) 
-	jugarOtra=otraPartida(jugarOtra)  
-DesplegarResultadoFinal(Ganador) 
+	ContarGanadorPartida(Ganador, Ganador0, Ganador1, Ganador2)
+	jugarOtra=otraPartida(jugarOtra, PrimeraPartida)  
+DesplegarResultadoFinal(Ganador0, Ganador1, Ganador2) 
 
