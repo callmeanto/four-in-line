@@ -59,9 +59,9 @@ proc InicializarPartida(in N,M: int;in-out linea,p,q:int,JugadaPrimeraVez:bool; 
        ;i:=i+1
      od
 
-		Linea:=5;
-		q,p:= Random.Randint(6),5; //p y q son las jugadas de la computadora en el nivel medio. Estas variables son para guardar la ultima jugada.
-		JugadaPrimeraVez:=True
+	 Linea:=5;
+	 q,p:= Random.Randint(6),5; //p y q son las jugadas de la computadora en el nivel medio. Estas variables son para guardar la ultima jugada.
+	 JugadaPrimeraVez:=True
    ]
 
 proc SeguirJugando (in-out siguePartida:bool)
@@ -251,7 +251,7 @@ proc DeterminarJugadaValida (in N,M:int; Matrix: array[0..N)[0..M) of int; i:int
 ]
 
 
-proc validarJugada(in N,M:int;in-out Matrix: array[0..N)[0..M), jugada:int,out esValida:bool,i:int) 
+proc validarJugada(in N, M:int;in-out Matrix: array[0..N)[0..M), jugada:int,out esValida:bool, i:int) 
      {Matrix[i][j]=1 \/ Matrix[i][j]=2 \/ Matrix[i][j]=0}
      {esValida=Matrix[i][j]=0 \/ esValida=Matrix[i][j]=1} //Pre y post no son las mas adecuadas CHEQUEAR
   [
