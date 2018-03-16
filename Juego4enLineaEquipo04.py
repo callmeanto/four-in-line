@@ -60,7 +60,7 @@ def SeguirJugando (siguePartida:bool) -> bool:
 
  #Este proceso determina si se desea seguir jugando o no (Se le pregunta al jugador luego de cada jugada)
  
-def DesplegarGanador(Ganador:int) -> int: 
+def DesplegarGanador(Ganador:int) -> 'Void': 
  
  #Este proceso Muestra en pantalla el ganador de la partida luego de que esta termine
  
