@@ -11,12 +11,14 @@
 	Última fecha de modificación: 13/03/2018
 }
 
-proc otraPartida(in-out jugarOtra:bool) 
+proc otraPartida(in-out jugarOtra:bool, out PrimeraPartida:bool) 
     {Precondicion}
     {Postcondicion}
     [
      VAR     
         y : string;
+
+        PrimeraPartida:=False;
         write("La partida ha finalizado")
         write("¿Desea jugar otra partida? Tipee Si o No ")
         read(y)
@@ -29,10 +31,10 @@ proc otraPartida(in-out jugarOtra:bool)
   ]
 
 
-proc InicializarPartida(in N,M: int;in-out linea,p,q:int,JugadaPrimeraVez:bool; out nombreJugador:string,Nivel:int,Matrix: array[0..N)[0..M) of int)
+proc InicializarPartida(in PrimeraPartida:bool ,Ganador,N,M: int; out linea,p,q:int,JugadaPrimeraVez:bool, nombreJugador:string,Nivel:int,Matrix: array[0..N)[0..M) of int, turno:int)
      VAR i,j:int;
          ganador:int;
-     {N>0 /\ M>0 /\ (%linea}
+     {N>0 /\ M>0}
      {(%forall i,j: 0<=i<N /\ 0<=j<M : Matrix[i][j]=0)}
     [
     //ENTRADA DE DATOS
@@ -58,10 +60,24 @@ proc InicializarPartida(in N,M: int;in-out linea,p,q:int,JugadaPrimeraVez:bool; 
        od
        ;i:=i+1
      od
-
+    
+     //Variables para el nivel medio del CPU
 	 Linea:=5;
 	 q,p:= Random.Randint(6),5; //p y q son las jugadas de la computadora en el nivel medio. Estas variables son para guardar la ultima jugada.
 	 JugadaPrimeraVez:=True
+
+     //Turnos
+     if PrimeraPartida=True ->
+        turno=2
+     [] PrimeraPartida=False ->
+        if Ganador=0 ->
+            turno=2
+        [] Ganador=1 ->
+            turno=1
+        [] Ganador=2 ->
+            turno=2
+        fi
+    fi
    ]
 
 proc SeguirJugando (in-out siguePartida:bool)
@@ -424,9 +440,9 @@ proc DesplegarGanador(in Ganador:int)
     fi
 ]
 
-proc ContadorGanadorPartida(in ganador:int;out ganador0,ganador1,ganador2:int) //Este procedimiento cuenta la cantidad de partidas ganadas por cada jugador
+proc ContarGanadorPartida(in ganador:int;out ganador0,ganador1,ganador2:int) //Este procedimiento cuenta la cantidad de partidas ganadas por cada jugador
 {ganador=0 \/ ganador=1 \/ ganador=2}
-{ganador0=(%sigma i: 0<=i< /\ : 1)}
+{ganador0>=0 /\ ganador1>=0 /\ ganador2>=0}
 
  VAR
 [
@@ -440,8 +456,8 @@ proc ContadorGanadorPartida(in ganador:int;out ganador0,ganador1,ganador2:int) /
 ]
 
 proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:string)
-{}
-{}
+{ganador1>=0 \/ ganador2>=0 \/ ganador0>=0}
+{True}
 
 [
  write("El resultado final es:");
@@ -472,12 +488,14 @@ proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:str
    siguePartida:bool;
    jugarOtra:bool;
    ganador0,ganador1,ganador2:int;
+   PrimeraPartida:bool
 
    {N>0 /\ M>0}
-   jugarOtra:=True;
+   jugarOtra, PrimeraPartida:=True, True;
+   ganador0,ganador1,ganador2:=0,0,0 //Se inicializan en 0 ya que luego se le sumara 1 dependiendo de quien gane
    {inv: ,cota:}
    do jugarOtra -> 
-	   InicializarPartida(N,M,linea,p,q,JugadaPrimeraVez,nombreJugador,nivel,Tablero) 
+	   InicializarPartida(PrimeraPartida, ganador,N,M,linea,p,q,JugadaPrimeraVez,nombreJugador,nivel,Tablero, turno) 
 	   siguePartida:=True;
 	   {inv: ,cota: }
 	   do siguePartida ->         
@@ -495,7 +513,7 @@ proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:str
 	   od; 
 	   DesplegarGanador(ganador);
 	   ContarGanadorPartida(ganador,ganador0,ganador1,ganador2); 
-	   otraPartida(jugarOtra);       
+	   otraPartida(jugarOtra, PrimeraPartida);       
    od; 
    DesplegarResultadoFinal(ganador0,ganador1,ganador2);
 
