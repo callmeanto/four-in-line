@@ -59,6 +59,9 @@ def LineaDiagonalIzquierda (turno:int, Matrix:int, Ganador:int) -> int:
 def SeguirJugando (siguePartida:bool) -> bool:
 
  print("Este proceso determina si se desea seguir jugando o no (Se le pregunta al jugador luego de cada jugada)")
+ siguePartida=False #Esto se le agrega para probar el flujo del programa y no quede dentro del bucle
+ 
+ return siguePartida
  
 def DesplegarGanador(Ganador:int) -> 'Void': 
  
@@ -67,6 +70,9 @@ def DesplegarGanador(Ganador:int) -> 'Void':
 def otraPartida(jugarOtra:bool) -> bool:
 
  print("Este proceso Pregunta el jugador, luego de que termina una partida, si se desea jugar otra")
+ jugarOtra=False #Esto se le agrega para probar el flujo del programa y no quede dentro del bucle
+
+ return jugarOtra
 
 def ReflejarJugada(i:int, jugada:int, turno:int, Matrix:int) -> 'Void':
 
@@ -79,6 +85,9 @@ def CambiarTurno(turno:int) -> int:
 def validarJugada(N: int, M:int, Matrix:int, jugada:int, esValida:bool, i:int):
 
  print("Este proceso determinara si la Jugada del jugador es valida y la colocara en la matriz")
+ esValida=False #Esto se le agrega para probar el flujo del programa y no quede dentro del bucle
+
+ return esValida
 
 def InicializarPartida(N:int, M:int,Linea:int , p:int, q:int,JugadaPrimeraVez:bool, nombreJugador:str ,Nivel:int, Matrix:int):
     
@@ -106,7 +115,7 @@ def DesplegarResultadoFinal(Ganador:int) -> 'Void':
 
  print("Este proceso desplegara en pantalla la cantidad de veces que el jugador ha ganado, la cantidad de veces que gano el CPU y cuantas veces quedo en empate")
 
-#Variables declaradas
+#Variables declaradas / Se les puso un valor cualquiera solo para declararlas, dentro del programa en Inicializar partida se les colocara sus verdaderos valores
 N=6
 M=7
 nombreJugador="Nombre"
@@ -129,16 +138,16 @@ while jugarOtra==True:
 	siguePartida=True
 	while siguePartida==True:                                                                                                                                                                      
 		ObtenerJugada(nivel, turno, nombreJugador, N, M, Tablero, JugadaPrimeraVez, Linea, p, q, jugada) 
-		validarJugada(N,M,Tablero,jugada,esValida,i)
+		esValida=validarJugada(N,M,Tablero,jugada,esValida,i)
 		if esValida==True:            
 			ReflejarJugada(i,jugada,turno,Tablero)            
-			turno=CambiarTurno(turno)       
+			CambiarTurno(turno)       
 		elif esValida==False:           
 			pass
 		DeterminarGanador(N,M,turno,Tablero,Ganador) 
 		DeterminarPartidaTerminada(N,M,Ganador,Tablero,siguePartida) 
-		SeguirJugando(siguePartida) 
+		siguePartida=SeguirJugando(siguePartida) 
 	DesplegarGanador(Ganador) 
-	otraPartida(jugarOtra)  
+	jugarOtra=otraPartida(jugarOtra)  
 DesplegarResultadoFinal(Ganador) 
 
