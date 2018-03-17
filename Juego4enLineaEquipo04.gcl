@@ -2,18 +2,18 @@
 	Juego4enLineaEquipo04.gcl
 	DESCRIPCIÓN: Este es el algoritmo que sigue el juego Cuatro en línea, que consiste
 	en una matriz 6x7 y dos "fichas" (para 2 jugadores) que tendrán el valor 1 y 2 
-	cuando ocupen una posición de la matriz, y el objetivo del juego es completar una línea 
-	de 4 fichas de forma vertical, horizontal o diagonal.
+	(1 para el usuario y 2 para la computadora) cuando ocupen una posición de la matriz,
+	y el objetivo del juego es completar una línea de 4 fichas de forma vertical, horizontal o diagonal.
 
 	Autores:
 	       Br. Pietro Iaia
 	       Br. Antonella Requena
-	Última fecha de modificación: 13/03/2018
+	Última fecha de modificación: 16/03/2018
 }
 
-proc otraPartida(in-out jugarOtra:bool) 
-    {Precondicion}
-    {Postcondicion}
+proc otraPartida(in-out jugarOtra:bool)  //Este procedimiento verifica si el usuario desea jugar otra partida
+    {true}
+    {jugarOtra=True \/ jugarOtra=False}  //el parametro in-out jugarOtra es un bool que vale True si el usuario quiere jugar otra partida
     [
      VAR     
         y : string;
@@ -28,11 +28,14 @@ proc otraPartida(in-out jugarOtra:bool)
 
   ]
 
-
-proc InicializarPartida(in N,M: int;in-out linea,p,q:int,JugadaPrimeraVez:bool; out nombreJugador:string,Nivel:int,Matrix: array[0..N)[0..M) of int)
-     VAR i,j:int;
-         ganador:int;
-     {N>0 /\ M>0 /\ (%linea}
+//Este procedimiento Inicializa la partida, es decir, vacía el tablero (coloca 0 en todas las posiciones de la matriz), pide el nombre del jugador 
+// y pide el nivel
+// parametros: N y M son el tamano de la matriz, in-out: linea corresponde a la fila en la matriz que se esta jugando,
+// p,q son los valores de la ultima jugada (p corresponde a la posiicion en la fila y q a la posicion en la columna)
+// nombreJugador es la variable que guarda el nombre del jugador, Nivel el nivel (1 si es basico o 2 si es medio) y Matrix es la matriz que representa el tablero 
+proc InicializarPartida(in N,M: int; out nombreJugador:string,nivel:int,Matrix: array[0..N)[0..M) of int)
+     VAR i,j:int; //Variables para recorrer la matriz
+     {N>0 /\ M>0}
      {(%forall i,j: 0<=i<N /\ 0<=j<M : Matrix[i][j]=0)}
     [
     //ENTRADA DE DATOS
@@ -41,7 +44,7 @@ proc InicializarPartida(in N,M: int;in-out linea,p,q:int,JugadaPrimeraVez:bool; 
      write("Indique  el nivel que desea jugar: ");
      write("Nivel Básico: Tipee 1.");
      write("Nivel Medio: Tipee 2.");
-     read(Nivel);
+     read(nivel);
 
      //INICIALIZACION DEL TABLERO
      i:=0;
@@ -58,23 +61,21 @@ proc InicializarPartida(in N,M: int;in-out linea,p,q:int,JugadaPrimeraVez:bool; 
        od
        ;i:=i+1
      od
-
-	 Linea:=5;
-	 q,p:= Random.Randint(6),5; //p y q son las jugadas de la computadora en el nivel medio. Estas variables son para guardar la ultima jugada.
-	 JugadaPrimeraVez:=True
    ]
 
 proc SeguirJugando (in-out siguePartida:bool)
   {siguePartida=True}
   {siguePartida=True \/ siguePartida=False} 
   [ 
-    var seguirJugando: string
-    write ("Quiere seguir jugando?")
-    read (seguirJugando)
-    if seguirJugando="Si" ->
-        skip
-    [] seguirJugando="No" ->
-        siguePartida:=False 
+    
+    var seguirJugando: string;
+	  write ("¿Quiere seguir jugando?")
+	    read (seguirJugando)
+	    if seguirJugando="Si" ->
+	        skip
+	    [] seguirJugando="No" ->
+	        siguePartida:=False 
+	    fi
   ]
 
 proc DeterminarPartidaTerminada(in N:int, M:int, Ganador:int, Matrix:array[0..N)[0..M) of int, in-out siguePartida:bool)
@@ -108,34 +109,31 @@ proc DeterminarPartidaTerminada(in N:int, M:int, Ganador:int, Matrix:array[0..N)
     fi
 ]
 
-proc ObtenerJugada(in nivel:int,turno:int,nombreJugador:string,N:int,M:int;in-out Matrix: array[0..N)[0..M) of int,JugadaPrimeraVez:bool,Linea,p,q:int;out jugada:int)
+proc ObtenerJugada(in nivel:int,turno:int,nombreJugador:string,N:int,M:int;in-out Matrix: array[0..N)[0..M) of int,JugadaPrimeraVez:bool,linea,p,q:int;out jugada:int)
 
-    {}
-    {}
+    {N>0 /\ M>0 /\ (nivel=1 \/ nivel=2) /\ (turno=1 \/ turno=2) /\ linea=(%exist i:0<=i<N: i)) /\ p=(%exist i:0<=i<N:i) /\ q=(%exist i:0<=i<M:i)  }
+    {(turno=1 /\ Matrix[i][jugada]=1) \/ (turno=2 /\ nivel=1 /\ (%exist i,j : 0<=i<N /\ 0<=j<M : Matrix[i][j]=2) \/ (turno=2 /\ nivel=2 /\ Matrix[p][q]=2)}
   [
      VAR 
-         i,j,filaLlena:int;
-         casillaLlena,Valida:bool;
-     {(t=1 \/ t=2) /\ (n=1 \/ n=2)}
-     {(t=1 /\ Matrix[i][j]=1) \/ (t=2 /\ (%any i,j : 0<=i<N /\ 0<=j<M : Matrix[i][j]=2) )} //Esta postcondicion no garantiza que la casilla del CPU se haya asignado bien OJO
-     if t=1 ->
+         i,j,filaLlena:int; //Variables para recorrer la matrix y contar la cantidad de casillas que estan ocupadas en la columna seleccionada
+         casillaLlena,Valida:bool; // Si la casilla esta llena y si la casilla que escogio el computador es valida (no esta ocupada)
+    if turno=1 -> //turno del usuario
         write("Su turno") ; 
         write("Por favor, "+nombreJugador+" introduzca una jugada: ") ;
         read(jugada) ;
-        validarJugada(N,M,Matrix,jugada)
-
-     [] turno!=1 /\ nivel=1 ->  //Nivel Basico
+        validarJugada(N,M,Matrix,jugada) //llama al proc validar jugada para ver si es valida
+    [] turno!=1 /\ nivel=1 ->  //Nivel Basico
         write("Turno del computador") ;
         casillaLlena:=False;
         do casillaLlena=False ->
-            jugada:=random.randint(M-1);
-            i,filaLlena:=N-1,0;
+            q:=random.randint(M-1); //Escoge una columna aleatoria a jugar por ser nivel basico
+            i,filaLlena:=N-1,0; // i es la variable para recorrer las filas de abajo hacia arriba buscando la primera casilla vacia
             do(i>=0 /\ casillaLlena=False /\ filaLlena!=N) ->
               if Matrix[i][jugada]=0 ->
                  Matrix[i][jugada]:=2;
                  casillaLlena:=True //Sale del ciclo una vez que asigna
               [] Matrix[i][jugada]!=0 ->
-                 filaLlena:=filaLlena+1
+                 filaLlena:=filaLlena+1 //Contador para la cantidad de casillas de la columna seleccionada que estan ocupadas
               fi
               ;i:=i-1
             od
@@ -151,10 +149,10 @@ proc ObtenerJugada(in nivel:int,turno:int,nombreJugador:string,N:int,M:int;in-ou
 	                q:=Random.Randint(6)  //Si la casilla que selecciona NO tiene un 0, entonces debe escoger otra columna de forma aleatoria y se repite el ciclo
 	            fi
 	        [] JugadaPrimeraVez=False ->
-	            DeterminarLinea(N, M, Matrix, p, q, Linea) //Determina si la linea a formar es horizontal derecha(linea 0), izqda (linea 1),
-	            if Linea=0 ->                              // vertical (linea 2), diagonal derecha (linea 3), diagonal izqda (linea 4), o es random (linea 0)
+	            DeterminarLinea(N, M, Matrix, p, q, linea) //Determina si la linea a formar es horizontal derecha(linea 0), horizontal izqda (linea 1),
+	            if Linea=0 ->                              // vertical (linea 2), diagonal derecha (linea 3), diagonal izqda (linea 4), o es random (linea 5)
 	                q:=q+1
-	                Matrix[p][q]:=2
+	                Matrix[p][q]:=2                //Si escogio la linea 0, a la posicion anterior en la columna le suma 1 mas para jugar alli.
 	            [] Linea=1 -> 
 	                q:=q-1
 	                Matrix[p][q]:=2
@@ -163,43 +161,43 @@ proc ObtenerJugada(in nivel:int,turno:int,nombreJugador:string,N:int,M:int;in-ou
 	                Matrix[p][q]:=2
 	            [] Linea=3 -> 
 	                p,q:=p-1,q+1
-	                Matrix[p-1][q]:=2
-	            [] Linea=4 -> 
-	                p,q:=p-1,q-1
 	                Matrix[p][q]:=2
-	            [] Linea=5 ->   
-	                Valida:=False
+	            [] Linea=4 -> 
+	                p,q:=p-1,q-1;
+	                Matrix[p][q]:=2
+	            [] Linea=5 ->   //Esto lo hace cuando no puede construir ninguna linea, entonces tiene que escoger otra casilla e intentar construir otra linea
+	                Valida:=False;
 	                do Valida=False ->
-	                    p,q:=Random.Randint(N-1), Random.Randint(M-1)
-	                    DeterminarJugadaValida(Matrix, p, q, Valida)       //Valida es una variable local
+	                    p,q:=random.randint(N-1), random.randint(M-1)
+	                    DeterminarJugadaValida(Matrix, p, q, Valida)      
 	                    if Valida=False ->
 	                        skip
 	                    [] Valida=True ->
-	                        Matrix[p][q]:=2
-	                    fi
-	                od
-	            fi
-	        fi
+	                        Matrix[p][q]:=2   //Aqui asigna la casilla una vez que encontro una casilla donde puede jugar
+	                    fi;
+	                od;
+	            fi;
+	        fi;
 	    fi
 	]
 
 
-proc DeterminarLinea(in N:int, M:int, Matrix: array[0..N)[0..M) of int, p:int, q:int ; in-out Linea:int)
-{Linea=0 \/ Linea=1 \/ Linea=2 \/ Linea=3 \/ Linea=4 \/ Linea=5}
-{Linea=0 \/ Linea=1 \/ Linea=2 \/ Linea=3 \/ Linea=4 \/ Linea=5}
-[ var Valida0, Valida1, Valida2, Valida3, Valida4, SigueFila :bool  
+proc DeterminarLinea(in N:int, M:int, Matrix: array[0..N)[0..M) of int, p:int, q:int ; in-out Linea:int) //Este proc es para determinar la linea que intentara construir el cpu
+{(Linea=0 \/ Linea=1 \/ Linea=2 \/ Linea=3 \/ Linea=4 \/ Linea=5) /\ Matrix[p][q]=2}
+{(Linea=0 \/ Linea=1 \/ Linea=2 \/ Linea=3 \/ Linea=4 \/ Linea=5)}
+[ var Valida0, Valida1, Valida2, Valida3, Valida4, SigueFila :bool; //SigueFila es una variable para chequear si el cpu puede seguir construyendo esa linea 
 
     DeterminarJugadaValida(N, M, Matrix, p, q+1, Valida0)  
     DeterminarJugadaValida(N, M, Matrix, p, q-1, Valida1)  
-    DeterminarJugadaValida(N, M, Matrix, p-1, q, Valida2)             //Verfica si cada posible fila tiene ficha abajo. y luego en el if de abajo lo toma en cuenta
+    DeterminarJugadaValida(N, M, Matrix, p-1, q, Valida2)           //Verifica si cada posible fila tiene ficha abajo, y luego en el if de abajo lo toma en cuenta
     DeterminarJugadaValida(N, M, Matrix, p-1, q+1, Valida3) 
     DeterminarJugadaValida(N, M, Matrix, p-1, q-1, Valida4) 
     SigueFila:=False;
 
     if Linea=0 ->
-        DeterminarJugadaValida (N, M, Matrix, p, q+1, SigueFila)
+        DeterminarJugadaValida(N, M, Matrix, p, q+1, SigueFila)
     [] Linea=1 -> 
-        DeterminarJugadaValida (N, M, Matrix, p, q-1, SigueFila) 
+        DeterminarJugadaValida(N, M, Matrix, p, q-1, SigueFila) 
     [] Linea=2 ->
         DeterminarJugadaValida (N, M, Matrix, p-1, q, SigueFila)
     [] Linea=3 ->
@@ -210,9 +208,9 @@ proc DeterminarLinea(in N:int, M:int, Matrix: array[0..N)[0..M) of int, p:int, q
         skip
     fi;
 
-    if SigueFila=True ->
+    if SigueFila=True ->   //Sigue construyendo esa linea, no pasa nada
         skip
-    [] SigueFila=False -> 
+    [] SigueFila=False ->  //Intenta construir otra linea, intentara construir una horizontal, vertical o diagonal dependiendo de la guardia que se cumpla
         if Valida0=True ->
             Linea:=0
         [] Valida1=True ->
@@ -224,17 +222,17 @@ proc DeterminarLinea(in N:int, M:int, Matrix: array[0..N)[0..M) of int, p:int, q
         [] Valida4=True ->
             Linea:=4
         [] Valida0=False /\ Valida1=False /\ Valida2=False /\ Valida3=False /\ Valida4=False ->                                           
-            Linea:=5
+            Linea:=5  //No hay ninguna linea que pueda intentar construir entonces vuelve a intentar construir una linea nueva en otra casilla
         fi
     fi
 ]
 
 
-proc DeterminarJugadaValida (in N,M:int; Matrix: array[0..N)[0..M) of int; i:int, j:int; out Valida:bool)
-{}
+proc DeterminarJugadaValida(in N,M:int; Matrix: array[0..N)[0..M) of int; i:int, j:int; out Valida:bool) //Este procedimiento chequea si el cpu puede colocar la ficha en la casilla que intento en el procedimiento ObtenerJugada, esto es si la casilla de abajo esta ocupada y si esta jugando en la fila extrema inferior 
+{N>0 /\ M>0 /\ 0<=i<N /\ 0<=j<M}
 {Valida=False \/ Valida=True}
 [
-    if i>=0 /\ i<=N-1 /\ j>=0 /\ j<=M-1->
+    if (i>=0 /\ i<=N-1 /\ j>=0 /\ j<=M-1) ->
         if Matrix[i][j]=0 ->
             if i=5 -> Valida:=True
             [] i!=5 -> 
@@ -245,15 +243,15 @@ proc DeterminarJugadaValida (in N,M:int; Matrix: array[0..N)[0..M) of int; i:int
         [] Matrix[i][j]!=0 ->
             Valida:=False
         fi
-    [] i<0 \/ i>N-1 \/ j<0 \/ j>M-1 ->
+    [] (i<0 \/ i>N-1 \/ j<0 \/ j>M-1) -> //Casos borde, se sale de la matriz, no puede hacer la proxima jugada alli
         Valida:=False
     fi
 ]
 
 
-proc validarJugada(in N, M:int;in-out Matrix: array[0..N)[0..M), jugada:int,out esValida:bool, i:int) 
-     {Matrix[i][j]=1 \/ Matrix[i][j]=2 \/ Matrix[i][j]=0}
-     {esValida=Matrix[i][j]=0 \/ esValida=Matrix[i][j]=1} //Pre y post no son las mas adecuadas CHEQUEAR
+proc validarJugada(in N, M:int;in-out Matrix: array[0..N)[0..M), jugada:int,out esValida:bool, i:int) //este procedimiento valida la jugada del USUARIO
+     {0<=jugada<M}
+     {Matrix[i][jugada]=1} 
   [
 		var ocupada: bool;
 		     filaLlena:int;
@@ -266,13 +264,12 @@ proc validarJugada(in N, M:int;in-out Matrix: array[0..N)[0..M), jugada:int,out 
           esValida:=True;
           Matrix[i][jugada]:=1;
           ocupada:=False //La casilla no esta ocupada, se sale del ciclo
-
        [] Matrix[i][jugada]!=0 ->
           filaLlena:=filaLlena+1
        fi
        ;i:=i-1
      od
-     if filaLlena=N ->
+     if filaLlena=N -> //si la fila esta llena entonces no puede colocar una ficha alli, debe intentarlo de nuevo
         esValida=False;
         write("La jugada no es válida. Por favor, inténtelo de nuevo")
         write("Recuerde que sólo puede colocar fichas en casillas vacías sobre otras ocupadas y en casillas vacías de la fila extrema inferior")
@@ -283,7 +280,7 @@ proc validarJugada(in N, M:int;in-out Matrix: array[0..N)[0..M), jugada:int,out 
     od
     ]
 
-
+//Este procedimiento refleja la jugada (simula la interfaz grafica)
 proc ReflejarJugada(in i, jugada,turno:int;Matrix:array[0..N)[0..M) of int)
 {True}
 {True}
@@ -296,9 +293,20 @@ proc ReflejarJugada(in i, jugada,turno:int;Matrix:array[0..N)[0..M) of int)
 
     UltimaJugada:=jugada;
     ColocarJugada(UltimaJugada, Tablero) // ColocarJugada(que cosa, en que lugar, donde se pondra)
-    write(Tablero(Inicio: Matrix[0][0], termina: Matrix[5][6]))
+    dibujarTablero(N,M)
 ]
+ //este procedimiento simula la interfaz grafica de dibujar el tablero
+proc ​dibujarTablero(in alto:int, in ancho: int) 
+     {Pre: alto>0 /\ ancho>0} 
+     {Post: se dibuja un cuadro de ancho x alto} 
 
+     [
+       dibujarlinea(0,N)
+       dibujarlinea(0,M)
+      
+     ]
+
+//este procedimiento cambia el turno
 proc CambiarTurno(in-out turno:int)
 {turno=1 \/ turno=2}
 {turno=1 \/ turno=2}
@@ -307,20 +315,21 @@ proc CambiarTurno(in-out turno:int)
     [] turno=2 -> turno:=1
     fi
 ]
-
+// este procedimiento determina el ganador
 proc DeterminarGanador(in N:int, M:int, turno:int, Matrix: array[0..N)[0..M); out Ganador:int)
 {turno=1 \/ turno=2}
 {Ganador=0 \/ Ganador=1 \/ Ganador=2}
 [
-    Ganador:=0
+    Ganador:=0;
 
-    LineaVertical (N, M, turno, Matrix, Ganador)
+    LineaVertical (N, M, turno, Matrix, Ganador)    //Llama a los procedimientos de linea para ver si algun jugador completo alguna linea
     LineaHorizontal (N, M, turno, Matrix, Ganador)
     LineaDiagonalIzquierda (turno, Matrix, Ganador)
     LineaDiagonalDerecha (turno, Matrix, Ganador)
     
 ]
 
+//Los procedimientos de Linea a continuacion verifican en cada iteracion si algun jugador (representados por el turno) completo alguna linea
 proc LineaVertical(in N:int, M:int, turno:int, Matrix:int, in-out Ganador:int)
 {turno=1 \/ turno=2}
 {Ganador=0 \/ Ganador=1 \/ Ganador=2}
@@ -381,8 +390,8 @@ proc LineaDiagonalDerecha(in turno:int, Matrix:int, in-out Ganador:int)
     od
 ]
 
-proc LineaDiagonalIzquierda (in turno:int, Matrix:int, in-out Ganador:int)
-{turno=1 \/ turno=2}
+proc LineaDiagonalIzquierda (in N,M, turno:int; Matrix: array[0..N)[0..M) of int, in-out Ganador:int)
+{N>0 /\ M>0 /\ (turno=1 \/ turno=2)}
 {Ganador=0 \/ Ganador=1 \/ Ganador=2}
 [ var i,j:int
     i:=0
@@ -391,7 +400,7 @@ proc LineaDiagonalIzquierda (in turno:int, Matrix:int, in-out Ganador:int)
         do j>2 ->
             if Matrix[i][j]=turno /\ Matrix[i+1][j-1]=turno /\ Matrix[i+2][j-2]=turno /\ Matrix[i+3][j-3]=turno ->
                 Ganador:=turno;
-                ResaltarLinea(Matrix[i][j],Matrix[i+1][j-1],Matrix[i+2][j-2],Matrix[i+3][j-3])
+                ResaltarLinea(Matrix[i][j],Matrix[i+1][j-1],Matrix[i+2][j-2],Matrix[i+3][j-3]) //Si hay un ganador, se resalta la linea
             [] Matrix[i][j]!=turno \/ Matrix[i+1][j-1]!=turno \/ Matrix[i+2][j-2]!=turno \/ Matrix[i+3][j-3]!=turno ->
                 skip
             fi;
@@ -400,7 +409,7 @@ proc LineaDiagonalIzquierda (in turno:int, Matrix:int, in-out Ganador:int)
         i=i+1
     od
 ]
-
+//Este procedimiento simula la interfaz grafica de resaltar la linea ganadora
 proc ResaltarLinea(in a,b,c,d:int)
 { (%forall i: i={a,b,c,d}: i=1 \/ i=2 )}
 {true}
@@ -413,7 +422,7 @@ proc ResaltarLinea(in a,b,c,d:int)
 
 ]
 
-
+//Este procedimiento simula la parte grafica de mostrar el ganador
 proc DesplegarGanador(in Ganador:int)
 {Ganador=1 \/ Ganador=0 \/ Ganador=2}
 {True}
@@ -423,10 +432,10 @@ proc DesplegarGanador(in Ganador:int)
     [] Ganador=0 -> write("La partida termino en empate!")
     fi
 ]
-
-proc ContadorGanadorPartida(in ganador:int;out ganador0,ganador1,ganador2:int) //Este procedimiento cuenta la cantidad de partidas ganadas por cada jugador
+//Este procedimiento cuenta la cantidad de veces que cada ganador gana tras cada partida, tambien cuenta los empates, 0 es empate, 1 es el usuario y 2 es el cpu
+proc ContadorGanadorPartida(in ganador:int;out ganador0,ganador1,ganador2:int) 
 {ganador=0 \/ ganador=1 \/ ganador=2}
-{ganador0=(%sigma i: 0<=i< /\ : 1)}
+{ (%exist i: i={ganador0,ganador1,ganador2} : i=(%sigma j: 0<=j<k /\ 0<k<=n : 1) } n es el nro de partidas, suponiendo que es cte
 
  VAR
 [
@@ -438,10 +447,10 @@ proc ContadorGanadorPartida(in ganador:int;out ganador0,ganador1,ganador2:int) /
     ganador2:=ganador2+1;
  fi
 ]
-
+//Este proceso simula la interfaz grafica del resultado final que es el total cuando el usuario no quiere jugar mas
 proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:string)
-{}
-{}
+{ganador0>=0 /\ ganador1>=0 /\ ganador2>=0 }
+{true}
 
 [
  write("El resultado final es:");
@@ -454,32 +463,33 @@ proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:str
 ]
 
 
-
-
 [ CONST 
  N,M:int;
  N=6,M=7;
  VAR    
-   nombreJugador:string;
-   Tablero: array[0..N)[0..M) of int;
-   nivel,i:int;
-   turno:int;
-   JugadaPrimeraVez:bool;
-   linea,p,q:int;
-   jugada:int;
-   ganador:int;
-   esValida:bool;
-   siguePartida:bool;
-   jugarOtra:bool;
-   ganador0,ganador1,ganador2:int;
+   nombreJugador:string;                              // Variable que guarda el nombre del jugador
+   Tablero: array[0..N)[0..M) of int;                 // Matriz que representa el tablero
+   nivel,i:int;                                       // nivel que se juega: 1 si es basico, 2 si es medio
+   turno:int;                                         // turno 1 si le toca jugar al usuario o turno 2 si le toca al cpu
+   JugadaPrimeraVez:bool;                             // variable booleana que vale true en la primera iteracion, es decir, la primera vez que juega el cpu
+   linea,p,q:int;                                     // linea es la fila en que se encuentra jugando la pc, es la fila inferior maxima de cada jugada
+   jugada:int;                                        // jugada es la jugada del usuario, representa la columna que escoge el usuario 
+   ganador:int;                                       // ganador guarda el ganador de cada partida, hay ganador cuando alguno complete alguna linea
+   esValida:bool;                                     // dice si la jugada del usuario es valida
+   siguePartida:bool;                                 // true si no hay un ganador aun y/o si el tablero no se ha llenado, o si el usuario quiere seguir jugando
+   jugarOtra:bool;                                    // true si el usuario quiere jugar otra partida
+   ganador0,ganador1,ganador2:int;                    // indican el resultado final de todas las partidas, 0 si hay empate, 1 si gana la persona, 2 si gana el cpu
 
    {N>0 /\ M>0}
    jugarOtra:=True;
    {inv: ,cota:}
    do jugarOtra -> 
-	   InicializarPartida(N,M,linea,p,q,JugadaPrimeraVez,nombreJugador,nivel,Tablero) 
+	   InicializarPartida(N,M,nombreJugador,nivel,Tablero); 
 	   siguePartida:=True;
-	   {inv: ,cota: }
+       JugadaPrimeraVez:=True;
+       linea:=5;
+       q,p:= random.randint(6),5; //p y q corresponden a la posicion de la fila y columna (respectivamente) que almacenan la ultima jugada de la computadora
+	   {inv: ,cota: }             //en la primera iteracion, se debe jugar en la fila 5 y se escoge de forma aleatoria la columna a jugar 
 	   do siguePartida ->         
 	     ObtenerJugada(nivel,turno,nombreJugador,N,M,Tablero,JugadaPrimeraVez,linea,p,q,jugada); 
 	     validarJugada(N,M,Talero,jugada,esValida,i)      
@@ -491,13 +501,16 @@ proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:str
 	     fi 
 	     DeterminarGanador(N,M,turno,Tablero,ganador);
 	     DeterminarPartidaTerminada(N,M,ganador,Tablero,siguePartida);
-	     SeguirJugando(siguePartida)
+	     if siguePartida=True ->
+	       SeguirJugando(siguePartida)
+	     [] siguePartida=False ->
+	        skip
+	      fi
 	   od; 
 	   DesplegarGanador(ganador);
 	   ContarGanadorPartida(ganador,ganador0,ganador1,ganador2); 
 	   otraPartida(jugarOtra);       
    od; 
-   DesplegarResultadoFinal(ganador0,ganador1,ganador2);
-
+   DesplegarResultadoFinal(ganador0,ganador1,ganador2)
 
    ]
