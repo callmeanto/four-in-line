@@ -407,6 +407,7 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 						else:
 							pygame.draw.circle(pantalla, BLANCO, (ColumnaCirculo[JugadaColumnaJugador], FilaCirculo[Fila]), 25, 0)
 							Matrix[Fila][JugadaColumnaJugador]=1
+							pygame.display.flip()
 							return Matrix, JugadaPrimeraVez, p, q, Linea, JugadaColumnaJugador          #Se le agrega un Return aqui para cuando el jugador termine
           		                                                                                        #su jugada
 		# TURNO DEL COMPUTADOR
@@ -418,7 +419,7 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 				if Fila==-1:
 					continue                                #Si Fila es -1 es porque no hay casillas libres, entonces repite el proceso
 				else:                                 #Como hay una casilla vacia entonces asigna 2 en la casilla y dibuja el circulo
-					time.sleep(3)                     #Esperara 3 segundos antes de ejecutar la jugada
+					time.sleep(0.3)                   #Esperara 0.3 segundos antes de mostrar la jugada
 					pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[JugadaColumnaCPU], FilaCirculo[Fila]), 25, 0)
 					Matrix[Fila][JugadaColumnaCPU]=2
 					break
@@ -427,10 +428,11 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 				if JugadaPrimeraVez==True:            #Si es la primera jugada de la partida, juega una casilla random
 					while JugadaPrimeraVez==True:
 						if Matrix[p][q]==0:  
+							time.sleep(0.3)           #Esperara 0.3 segundos antes de mostrar la jugada
 							Matrix[p][q]=2
 							pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
 							JugadaPrimeraVez=False
-						elif Matrix[p][q]!=0:
+						else:
 							q=random.randint(0,6)  
 					break                                                            #Se le coloca un break para salir del ciclo inicial
 				else:
