@@ -15,6 +15,7 @@ import os       # Se importa esta librería para
 import sys      # Se importa esta librería para utilizar sys.exit (versión robusta)
 import pygame   # Se importa esta librería para la interfaz gráfica
 import random   # Se importa esta librería para la implementación de la jugada del computador
+import time     # Se importa esta librería para utilizar time.sleep para que se espere un tiempo antes de la siguiente jugada
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 #                                 PROCEDIMIENTOS Y FUNCIONES                            #
@@ -334,7 +335,7 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
         Ganador0, Ganador1 y Ganador2 representan los contadores de los ganadores por partida (0 es empate, 1 es usuario y 2 es CPU)
 	"""
 	#Precondicion: 
-	assert(N>0 and M>0 and (turno=1 or turno=2) and (nivel=1 or nivel=2))
+	assert(N>0 and M>0 and (turno==1 or turno==2) and (nivel==1 or nivel==2))
 
 	#Coordenadas de circulos
 	ColumnaCirculo=[205,346,486,627,768,909,1050]        #Estas son las coordenadas de los circulos en el tablero
@@ -359,14 +360,14 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 	while True:
         # Hacer que el juego corrar a una velocidad que deseemos
 		reloj.tick(FPS)
+		# TURNO DEL USUARIO
 		if turno==1:
-			print("Su turno, "+nombreJugador)
-
 			for evento in pygame.event.get():
             	# Si el evento que esta ocurriendo es que se acabo el juego, entonces cerrarlo
 				if evento.type == pygame.QUIT:
 					QuitGame(Ganador0, Ganador1, Ganador2,Matrix)
             		# Dibujar una Linea cuando se presiona el mouse, y borra la anterior dibujada
+				# SI EL EVENTO ES MOVERSE ENTRE COLUMNAS
 				elif evento.type == pygame.MOUSEBUTTONDOWN:
 					if JugadaColumnaJugador==6:
 						JugadaColumnaJugador=0
@@ -395,6 +396,8 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 						pygame.draw.line(pantalla, NEGRO, Linea5Ini, Linea5Fin, 7)
 						pygame.draw.line(pantalla, BLANCO, Linea6Ini, Linea6Fin, 7)
             	#Dibuja un circulo dependiendo de donde este la posicion de la Linea
+
+            	# SI EL EVENTO ES SELECCIONAR LA COLUMNA (HACER JUGADA)
 				elif evento.type == pygame.KEYDOWN:
 					if evento.key == pygame.K_SPACE:
 						Fila=ValidarJugada(Matrix,JugadaColumnaJugador)
@@ -405,20 +408,23 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 							pygame.draw.circle(pantalla, BLANCO, (ColumnaCirculo[JugadaColumnaJugador], FilaCirculo[Fila]), 25, 0)
 							Matrix[Fila][JugadaColumnaJugador]=1
 							return Matrix, JugadaPrimeraVez, p, q, Linea, JugadaColumnaJugador          #Se le agrega un Return aqui para cuando el jugador termine
-				                                                                                        #su jugada
+          		                                                                                        #su jugada
+		# TURNO DEL COMPUTADOR
 		elif turno==2:
+			# NIVEL BÁSICO
 			if nivel==1:
-				JugadaColumnaCPU=random.randint(0,6)
-				Fila=ValidarJugada(Matrix,JugadaColumnaCPU)
+				JugadaColumnaCPU=random.randint(0,6)        #Como es el nivel basico, se hace un random entre 0 y 6 (las posibles columnas)
+				Fila=ValidarJugada(Matrix,JugadaColumnaCPU) #Y llama al proc ValidarJugada a ver si hay casillas vacias en esa col 
 				if Fila==-1:
-					continue
-				else:
+					continue                                #Si Fila es -1 es porque no hay casillas libres, entonces repite el proceso
+				else:                                 #Como hay una casilla vacia entonces asigna 2 en la casilla y dibuja el circulo
+					time.sleep(3)                     #Esperara 3 segundos antes de ejecutar la jugada
 					pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[JugadaColumnaCPU], FilaCirculo[Fila]), 25, 0)
 					Matrix[Fila][JugadaColumnaCPU]=2
 					break
-			
+			# NIVEL MEDIO
 			elif nivel==2:
-				if JugadaPrimeraVez==True: 
+				if JugadaPrimeraVez==True:            #Si es la primera jugada de la partida, juega una casilla random
 					while JugadaPrimeraVez==True:
 						if Matrix[p][q]==0:  
 							Matrix[p][q]=2
@@ -427,7 +433,7 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 						elif Matrix[p][q]!=0:
 							q=random.randint(0,6)  
 					break                                                            #Se le coloca un break para salir del ciclo inicial
-				elif JugadaPrimeraVez==False:
+				else:
 					Linea=DeterminarLinea(N, M, Matrix, p, q, Linea)
 					if Linea==0:                              
 						q=q+1
