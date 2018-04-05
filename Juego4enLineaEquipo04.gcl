@@ -11,15 +11,9 @@
 	Última fecha de modificación: 16/03/2018
 }
 
-<<<<<<< HEAD
-proc otraPartida(in-out jugarOtra:bool)  //Este procedimiento verifica si el usuario desea jugar otra partida
-    {true}
-    {jugarOtra=True \/ jugarOtra=False}  //el parametro in-out jugarOtra es un bool que vale True si el usuario quiere jugar otra partida
-=======
 proc otraPartida(in-out jugarOtra:bool, out PrimeraPartida:bool) 
-    {jugarOtra=True}
-    {jugarOtra=True \/ jugarOtra=False}
->>>>>>> 6f63973786ce615e60db2ba3bc72bda5250b3e31
+    {jugarOtra=True}                    //Este procedimiento verifica si el usuario desea jugar otra partida
+    {jugarOtra=True \/ jugarOtra=False} //el parametro in-out jugarOtra es un bool que vale True si el usuario quiere jugar otra partida
     [
      VAR     
         y : string;
@@ -36,20 +30,14 @@ proc otraPartida(in-out jugarOtra:bool, out PrimeraPartida:bool)
 
   ]
 
-<<<<<<< HEAD
 //Este procedimiento Inicializa la partida, es decir, vacía el tablero (coloca 0 en todas las posiciones de la matriz), pide el nombre del jugador 
 // y pide el nivel
 // parametros: N y M son el tamano de la matriz, in-out: linea corresponde a la fila en la matriz que se esta jugando,
 // p,q son los valores de la ultima jugada (p corresponde a la posiicion en la fila y q a la posicion en la columna)
 // nombreJugador es la variable que guarda el nombre del jugador, Nivel el nivel (1 si es basico o 2 si es medio) y Matrix es la matriz que representa el tablero 
-proc InicializarPartida(in N,M: int; out nombreJugador:string,nivel:int,Matrix: array[0..N)[0..M) of int)
-     VAR i,j:int; //Variables para recorrer la matriz
-=======
-
 proc InicializarPartida(in PrimeraPartida:bool ,Ganador,N,M: int; out linea,p,q:int,JugadaPrimeraVez:bool, nombreJugador:string,Nivel:int,Matrix: array[0..N)[0..M) of int, turno:int)
-     VAR i,j:int;
+     VAR i,j:int; //Variables para recorrer la matriz
          ganador:int;
->>>>>>> 6f63973786ce615e60db2ba3bc72bda5250b3e31
      {N>0 /\ M>0}
      {(%forall i,j: 0<=i<N /\ 0<=j<M : Matrix[i][j]=0)}
     [
@@ -76,8 +64,6 @@ proc InicializarPartida(in PrimeraPartida:bool ,Ganador,N,M: int; out linea,p,q:
        od
        ;i:=i+1
      od
-<<<<<<< HEAD
-=======
     
      //Variables para el nivel medio del CPU
 	 Linea:=5;
@@ -96,7 +82,6 @@ proc InicializarPartida(in PrimeraPartida:bool ,Ganador,N,M: int; out linea,p,q:
             turno=2
         fi
     fi
->>>>>>> 6f63973786ce615e60db2ba3bc72bda5250b3e31
    ]
 
 proc SeguirJugando (in-out siguePartida:bool)
@@ -148,13 +133,19 @@ proc DeterminarPartidaTerminada(in N:int, M:int, Ganador:int, Matrix:array[0..N)
 proc ObtenerJugada(in nivel:int,turno:int,nombreJugador:string,N:int,M:int;in-out Matrix: array[0..N)[0..M) of int,JugadaPrimeraVez:bool,linea,p,q:int;out jugada:int)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
     {N>0 /\ M>0 /\ (nivel=1 \/ nivel=2) /\ (turno=1 \/ turno=2) /\ linea=(%exist i:0<=i<N: i)) /\ p=(%exist i:0<=i<N:i) /\ q=(%exist i:0<=i<M:i)  }
     {(turno=1 /\ Matrix[i][jugada]=1) \/ (turno=2 /\ nivel=1 /\ (%exist i,j : 0<=i<N /\ 0<=j<M : Matrix[i][j]=2) \/ (turno=2 /\ nivel=2 /\ Matrix[p][q]=2)}
+=======
+    {N>0 /\ M>0 /\ (nivel=1 \/ nivel=2) /\ (turno=1 \/ turno=2) /\ 0=<linea<N /\ 0=<p<N  /\ 0=<q<N  }
+    {(turno=1 /\ Matrix[i][jugada]=1) \/ (turno=2 /\ nivel=1 /\ (%exist i,j : 0<=i<N /\ 0<=j<M : Matrix[i][j]=2)) \/ (turno=2 /\ nivel=2 /\ Matrix[p][q]=2)}
+>>>>>>> Antonella
   [
      VAR 
          i,j,filaLlena:int; //Variables para recorrer la matrix y contar la cantidad de casillas que estan ocupadas en la columna seleccionada
          casillaLlena,Valida:bool; // Si la casilla esta llena y si la casilla que escogio el computador es valida (no esta ocupada)
     if turno=1 -> //turno del usuario
+<<<<<<< HEAD
 =======
     {N>0 /\ M>0 /\ (turno=1 \/ turno=2) /\ (nivel=1 \/ nivel=2)}
     {(%exist i: 0<=i<=5: Linea=i) /\ 0<=p<N /\ 0<=q<M /\ 0<=jugada<M}
@@ -164,6 +155,8 @@ proc ObtenerJugada(in nivel:int,turno:int,nombreJugador:string,N:int,M:int;in-ou
          casillaLlena,Valida:bool;
      if t=1 ->
 >>>>>>> 6f63973786ce615e60db2ba3bc72bda5250b3e31
+=======
+>>>>>>> Antonella
         write("Su turno") ; 
         write("Por favor, "+nombreJugador+" introduzca una jugada: ") ;
         read(jugada) ;
@@ -227,6 +220,7 @@ proc ObtenerJugada(in nivel:int,turno:int,nombreJugador:string,N:int,M:int;in-ou
 	    fi
 	]
 
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 proc DeterminarLinea(in N:int, M:int, Matrix: array[0..N)[0..M) of int, p:int, q:int ; in-out Linea:int) //Este proc es para determinar la linea que intentara construir el cpu
@@ -239,6 +233,12 @@ proc DeterminarLinea(in N:int, M:int, Matrix: array[0..N)[0..M) of int, p:int, q
 {(%exist i: 0<=i<=5: Linea=i)}
 [ var Valida0, Valida1, Valida2, Valida3, Valida4, SigueFila :bool  
 >>>>>>> 6f63973786ce615e60db2ba3bc72bda5250b3e31
+=======
+proc DeterminarLinea(in N:int, M:int, Matrix: array[0..N)[0..M) of int, p:int, q:int ; in-out Linea:int) //Este proc es para determinar la linea que intentara construir el cpu
+{(%exist i: 0<=i<=5: Linea=i)}
+{(%exist i: 0<=i<=5: Linea=i)}
+[ var Valida0, Valida1, Valida2, Valida3, Valida4, SigueFila :bool  
+>>>>>>> Antonella
 
     DeterminarJugadaValida(N, M, Matrix, p, q+1, Valida0)  
     DeterminarJugadaValida(N, M, Matrix, p, q-1, Valida1)  
@@ -280,6 +280,7 @@ proc DeterminarLinea(in N:int, M:int, Matrix: array[0..N)[0..M) of int, p:int, q
     fi
 ]
 
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 proc DeterminarJugadaValida(in N,M:int; Matrix: array[0..N)[0..M) of int; i:int, j:int; out Valida:bool) //Este procedimiento chequea si el cpu puede colocar la ficha en la casilla que intento en el procedimiento ObtenerJugada, esto es si la casilla de abajo esta ocupada y si esta jugando en la fila extrema inferior 
@@ -288,6 +289,10 @@ proc DeterminarJugadaValida(in N,M:int; Matrix: array[0..N)[0..M) of int; i:int,
 proc DeterminarJugadaValida (in N,M:int; Matrix: array[0..N)[0..M) of int; i:int, j:int; out Valida:bool)
 {N>0 /\ M>0}
 >>>>>>> 6f63973786ce615e60db2ba3bc72bda5250b3e31
+=======
+proc DeterminarJugadaValida(in N,M:int; Matrix: array[0..N)[0..M) of int; i:int, j:int; out Valida:bool) //Este procedimiento chequea si el cpu puede colocar la ficha en la casilla que intento en el procedimiento ObtenerJugada, esto es si la casilla de abajo esta ocupada y si esta jugando en la fila extrema inferior 
+{N>0 /\ M>0 /\ 0<=i<N /\ 0<=j<M}
+>>>>>>> Antonella
 {Valida=False \/ Valida=True}
 [
     if (i>=0 /\ i<=N-1 /\ j>=0 /\ j<=M-1) ->
@@ -306,6 +311,7 @@ proc DeterminarJugadaValida (in N,M:int; Matrix: array[0..N)[0..M) of int; i:int
     fi
 ]
 
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 proc validarJugada(in N, M:int;in-out Matrix: array[0..N)[0..M), jugada:int,out esValida:bool, i:int) //este procedimiento valida la jugada del USUARIO
@@ -317,6 +323,12 @@ proc validarJugada(in N, M:int;in-out Matrix: array[0..N)[0..M), jugada:int,out 
      {esValida=0 \/ esValida=1} //Pre y post no son las mas adecuadas CHEQUEAR
 >>>>>>> 6f63973786ce615e60db2ba3bc72bda5250b3e31
   [
+=======
+proc validarJugada(in N, M:int;in-out Matrix: array[0..N)[0..M), jugada:int,out esValida:bool, i:int) //este procedimiento valida la jugada del USUARIO
+     {0<=jugada<M}
+     {Matrix[i][jugada]=1} 
+     [
+>>>>>>> Antonella
 		var ocupada: bool;
 		     filaLlena:int;
 
@@ -497,16 +509,23 @@ proc DesplegarGanador(in Ganador:int)
     fi
 ]
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> Antonella
 //Este procedimiento cuenta la cantidad de veces que cada ganador gana tras cada partida, tambien cuenta los empates, 0 es empate, 1 es el usuario y 2 es el cpu
 proc ContadorGanadorPartida(in ganador:int;out ganador0,ganador1,ganador2:int) 
 {ganador=0 \/ ganador=1 \/ ganador=2}
 { (%exist i: i={ganador0,ganador1,ganador2} : i=(%sigma j: 0<=j<k /\ 0<k<=n : 1) } n es el nro de partidas, suponiendo que es cte
+<<<<<<< HEAD
 =======
 
 proc ContarGanadorPartida(in ganador:int;out ganador0,ganador1,ganador2:int) //Este procedimiento cuenta la cantidad de partidas ganadas por cada jugador
 {ganador=0 \/ ganador=1 \/ ganador=2}
 {ganador0>=0 /\ ganador1>=0 /\ ganador2>=0}
 >>>>>>> 6f63973786ce615e60db2ba3bc72bda5250b3e31
+=======
+>>>>>>> Antonella
 
  VAR
 [
@@ -521,12 +540,17 @@ proc ContarGanadorPartida(in ganador:int;out ganador0,ganador1,ganador2:int) //E
 //Este proceso simula la interfaz grafica del resultado final que es el total cuando el usuario no quiere jugar mas
 proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:string)
 <<<<<<< HEAD
+<<<<<<< HEAD
 {ganador0>=0 /\ ganador1>=0 /\ ganador2>=0 }
 {true}
 =======
 {ganador1>=0 /\ ganador2>=0 /\ ganador0>=0}
 {True}
 >>>>>>> 6f63973786ce615e60db2ba3bc72bda5250b3e31
+=======
+{ganador0>=0 /\ ganador1>=0 /\ ganador2>=0 }
+{true}
+>>>>>>> Antonella
 
 [
  write("El resultado final es:");
@@ -544,6 +568,10 @@ proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:str
  N=6,M=7;
  VAR    
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+
+>>>>>>> Antonella
    nombreJugador:string;                              // Variable que guarda el nombre del jugador
    Tablero: array[0..N)[0..M) of int;                 // Matriz que representa el tablero
    nivel,i:int;                                       // nivel que se juega: 1 si es basico, 2 si es medio
@@ -556,6 +584,7 @@ proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:str
    siguePartida:bool;                                 // true si no hay un ganador aun y/o si el tablero no se ha llenado, o si el usuario quiere seguir jugando
    jugarOtra:bool;                                    // true si el usuario quiere jugar otra partida
    ganador0,ganador1,ganador2:int;                    // indican el resultado final de todas las partidas, 0 si hay empate, 1 si gana la persona, 2 si gana el cpu
+<<<<<<< HEAD
 =======
    nombreJugador:string;
    Tablero: array[0..N)[0..M) of int;
@@ -571,6 +600,9 @@ proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:str
    ganador0,ganador1,ganador2:int;
    PrimeraPartida:bool
 >>>>>>> 6f63973786ce615e60db2ba3bc72bda5250b3e31
+=======
+   PrimeraPartida:bool;
+>>>>>>> Antonella
 
    {N>0 /\ M>0}
    jugarOtra, PrimeraPartida:=True, True;
@@ -578,10 +610,15 @@ proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:str
    {inv: ,cota:}
    do jugarOtra -> 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	   InicializarPartida(N,M,nombreJugador,nivel,Tablero); 
 =======
 	   InicializarPartida(PrimeraPartida, ganador,N,M,linea,p,q,JugadaPrimeraVez,nombreJugador,nivel,Tablero, turno) 
 >>>>>>> 6f63973786ce615e60db2ba3bc72bda5250b3e31
+=======
+
+	   InicializarPartida(PrimeraPartida, ganador,N,M,linea,p,q,JugadaPrimeraVez,nombreJugador,nivel,Tablero, turno) 
+>>>>>>> Antonella
 	   siguePartida:=True;
        JugadaPrimeraVez:=True;
        linea:=5;
@@ -610,4 +647,8 @@ proc DesplegarResultadoFinal(in ganador0,ganador1,ganador2:int,nombreJugador:str
    od; 
    DesplegarResultadoFinal(ganador0,ganador1,ganador2)
 
+<<<<<<< HEAD
    ]
+=======
+   ]
+>>>>>>> Antonella
