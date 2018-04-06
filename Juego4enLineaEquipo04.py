@@ -370,15 +370,15 @@ def ValidarJugada(Matrix:[int], Columna:int) -> bool:
     Fila=5
     cota=Fila
     #Invariante y cota
-    assert(0<=Fila<=5)
-    assert(cota>=0)
+    assert(-1<=Fila<=5)
+    assert(cota>=-1)
     while Fila>=0 and Matrix[Fila][Columna]!=0: #Revisa Fila por fila en la columna que jugo el usuario hasta que encuentre una vacia
         Fila=Fila-1                             #Si Fila==-1 es porque recorrio toda la fila (de la posicion 5 a la 0)
         #Invariante y cota en cada iteracion
-        assert(0<=Fila<=5)
+        assert(-1<=Fila<=5)
         assert(cota>=Fila)
         cota=Fila
-        assert(cota>=0)         
+        assert(cota>=-1)         
     #Postcondicion
     assert((Fila==-1 and all(Matrix[Fila][Columna]!=0 for Fila in range(N)) ) or (0<=Fila<=5 and any(Matrix[Fila][Columna]==0 for Fila in range(N))))
 
@@ -526,8 +526,8 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
                 DibujarCirculo(q,p,turno)
 
     #Postcondicion
-    #assert((turno==1 and Matrix[Fila][JugadaColumnaJugador]==1) or (turno==2 and nivel==2 and Matrix[p][q]==2) 
-    #or (turno==2 and nivel==1 and Matrix[Fila][JugadaColumnaCPU]==2))
+    assert((turno==1 and Matrix[Fila][JugadaColumnaJugador]==1) or (turno==2 and nivel==2 and Matrix[p][q]==2) 
+    or (turno==2 and nivel==1 and Matrix[Fila][JugadaColumnaCPU]==2))
     return Matrix, JugadaPrimeraVez, p, q, Linea, JugadaColumnaJugador
 
 # FUNCION PARA DETERMINAR LA LINEA QUE INTENTARA CONSTRUIR EL COMPUTADOR (NIVEL MEDIO)
@@ -788,7 +788,7 @@ while jugarOtra:
     DesplegarGanador(nombreJugador, Ganador) 
     Ganador0, Ganador1, Ganador2 = ContarGanadorPartida(Ganador, Ganador0, Ganador1, Ganador2)
     PrimeraPartida, jugarOtra = otraPartida(Ganador0,Ganador1,Ganador2,Tablero)
-    Guardado = False
+    TableroG = []
 
 DesplegarResultadoFinal(Ganador0, Ganador1, Ganador2) 
 pygame.quit()
