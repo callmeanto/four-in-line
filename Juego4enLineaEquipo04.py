@@ -259,11 +259,17 @@ def CambiarTurno(turno:int) -> int:
 	return turno
 
 # PROCEDIMIENTO PARA INICIALIZAR LA PARTIDA
-def InicializarPartida(pantalla:int, PrimeraPartida:bool, Ganador:int, N:int, M:int) -> (str,int,bool):
-	""" Descripcion: Este procedimiento inicializa el tablero, recibe como parametros 
+def InicializarPartida(pantalla:int,PrimeraPartida:bool, Ganador:int, N:int, M:int) -> (str,int,bool):
+	""" Descripcion: Este procedimiento inicializa el tablero, recibe como parametros la variable pantalla, utilizada para
+	    la funcion de fill de pygame para poner la pantalla de un color. Recibe el bool de primera partida ya que si es 
+	    la primera partida, sino, recibe el parametro ganador dependiendo de su valor (1 o 2) le asignara el turno al ganador 
+	    correspondiente. Si es 0 empezara el computador. N y M son los tamaños de la matriz. En este subprograma se 
+	    le pide al usuario su nombre y el nivel que desea jugar. Retorna el tablero (matriz) con todas las casillas en 0, 
+	    el nombre del jugador, el nivel que desea jugar, las variables de la primera casilla a jugar del computador y un 
+	    booleano que indica que ya se hizo la primera jugada
 	"""
-	#Precondicion: N>0 and M>0
-	#Postcondicion: (%forall i,j: 0<=i<N and 0<=j<M : Matrix[i][j]=0)
+	#Precondicion
+	assert(N>0 and M>0 and 0<=Ganador<=2)
 
 	#ENTRADA DE DATOS
 	nombreJugador=str(input("Ingrese su nombre: "))
@@ -295,13 +301,15 @@ def InicializarPartida(pantalla:int, PrimeraPartida:bool, Ganador:int, N:int, M:
 	#Turnos
 	if PrimeraPartida==True:
 		turno=2
-	elif PrimeraPartida==False:                        #Si es la Primera Partida de la sesion, se le asigna el turno a la computadora
+	else:                                              #Si es la Primera Partida de la sesion, se le asigna el turno a la computadora
 		if Ganador==1:                                 #Si no, se verifica quien es el ganador de la partida pasada y empezaria el
 			turno=1                                    #Y si quedo empatado, empieza la computadora
 			Ganador=0                                  
 		elif Ganador==2 or Ganador==0:                 #Se le pone Ganador=0 ya que al iniciar la partida otra vez, se debe reiniciar esa variable
 			turno=2
 			Ganador=0
+	#Postcondicion: 
+	assert(all((Matrix[i][j]==0 for i in range(N)) for j in range(M)))
 	
 	return Ganador, nombreJugador, nivel, Matrix, Linea, q, p, JugadaPrimeraVez, turno
 
@@ -418,7 +426,7 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 				Fila=ValidarJugada(Matrix,JugadaColumnaCPU) #Y llama al proc ValidarJugada a ver si hay casillas vacias en esa col 
 				if Fila==-1:
 					continue                                #Si Fila es -1 es porque no hay casillas libres, entonces repite el proceso
-				else:                                 #Como hay una casilla vacia entonces asigna 2 en la casilla y dibuja el circulo
+				else:                                   #Como hay una casilla vacia entonces asigna 2 en la casilla y dibuja el circulo
 					time.sleep(0.3)                     #Esperara 0.3 segundos antes de ejecutar la jugada
 					pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[JugadaColumnaCPU], FilaCirculo[Fila]), 25, 0)
 					Matrix[Fila][JugadaColumnaCPU]=2
@@ -466,7 +474,7 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 						pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
 				break                                                                  #Se le coloca un break para salir del ciclo inicial
 
-		#Tablero Grafico 
+		#######TABLERO GRAFICO##### 
 		# Cuadrado exterior
 		pygame.draw.line(pantalla, VERDE, (130, 90), (130, 620))
 		pygame.draw.line(pantalla, VERDE, (1120, 90), (1120, 620))
