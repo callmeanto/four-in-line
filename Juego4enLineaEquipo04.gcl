@@ -339,21 +339,7 @@ proc DeterminarGanador(in N:int, M:int, turno:int, Matrix: array[0..N)[0..M); ou
 {turno=1 \/ turno=2}
 {Ganador=0 \/ Ganador=1 \/ Ganador=2}
 [
-    Ganador:=0;
-
-    LineaVertical (N, M, turno, Matrix, Ganador)    //Llama a los procedimientos de linea para ver si algun jugador completo alguna linea
-    LineaHorizontal (N, M, turno, Matrix, Ganador)
-    LineaDiagonalIzquierda (turno, Matrix, Ganador)
-    LineaDiagonalDerecha (turno, Matrix, Ganador)
-    
-]
-
-//Los procedimientos de Linea a continuacion verifican en cada iteracion si algun jugador (representados por el turno) completo alguna linea
-proc LineaVertical(in N:int, M:int, turno:int, Matrix:int, in-out Ganador:int)
-{turno=1 \/ turno=2}
-{Ganador=0 \/ Ganador=1 \/ Ganador=2}
-[ var j,i:int
-    i:=0;
+   i:=0;
     do i<N-3 ->
         j:=0
         do j<M ->
@@ -366,13 +352,8 @@ proc LineaVertical(in N:int, M:int, turno:int, Matrix:int, in-out Ganador:int)
             j:=j+1
         od;
         i:=i+1
-    od
-]
+    od;
 
-proc LineaHorizontal(in N:int, M:int, turno:int, Matrix:int, in-out Ganador:int)
-{turno=1 \/ turno=2}
-{Ganador=0 \/ Ganador=1 \/ Ganador=2}
-[ var i:int
     j:=0
     do j<M-3 ->
         i:=0
@@ -386,13 +367,8 @@ proc LineaHorizontal(in N:int, M:int, turno:int, Matrix:int, in-out Ganador:int)
             i:=i+1
         od;
         j:=j+1
-    od
-]
+    od;
 
-proc LineaDiagonalDerecha(in turno:int, Matrix:int, in-out Ganador:int)
-{turno=1 \/ turno=2}
-{Ganador=0 \/ Ganador=1 \/ Ganador=2}
-[ var i,j:int
     i:=0
     do i<3 ->
         j:=0
@@ -406,13 +382,8 @@ proc LineaDiagonalDerecha(in turno:int, Matrix:int, in-out Ganador:int)
             j:=j+1
         od;
         i:=i+1
-    od
-]
+    od;
 
-proc LineaDiagonalIzquierda (in N,M, turno:int; Matrix: array[0..N)[0..M) of int, in-out Ganador:int)
-{N>0 /\ M>0 /\ (turno=1 \/ turno=2)}
-{Ganador=0 \/ Ganador=1 \/ Ganador=2}
-[ var i,j:int
     i:=0
     do i<3 ->
         j:=6
@@ -427,7 +398,9 @@ proc LineaDiagonalIzquierda (in N,M, turno:int; Matrix: array[0..N)[0..M) of int
         od;
         i=i+1
     od
+    
 ]
+
 //Este procedimiento simula la interfaz grafica de resaltar la linea ganadora
 proc ResaltarLinea(in a,b,c,d:int)
 { (%forall i: i={a,b,c,d}: i=1 \/ i=2 )}
