@@ -431,9 +431,9 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 						if Matrix[p][q]==0:  
 							Matrix[p][q]=2
 							pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
-							JugadaPrimeraVez=False
-						elif Matrix[p][q]!=0:
-							q=random.randint(0,6)  
+							JugadaPrimeraVez=False   #Ya jugo la primera vez, le asigna False a este booleano
+						else:
+							q=random.randint(0,6)     #Como no hay una casilla vacia donde quiso jugar, hace un random de otra fila
 					break                                                            #Se le coloca un break para salir del ciclo inicial
 				else:                                     #Como ya no es la primera jugada, entonces procede a la estrategia
 					Linea=DeterminarLinea(N, M, Matrix, p, q, Linea)
