@@ -1,4 +1,3 @@
-#
 # Juego4enLineaEquipo04.py
 #
 # Descripción: Este es el algoritmo que sigue el juego  Cuatro en linea, que consiste en una matriz 6x7 y dos "fichas" (para 2 jugadores) 
@@ -7,6 +6,7 @@
 #
 # Autores: Pietro Iaia
 #          Antonella Requena
+#
 # Última fecha de modificación: 04/04/2018
 
 
@@ -172,8 +172,8 @@ def QuitGame(Ganador0:int, Ganador1:int, Ganador2:int, Matrix:[int]) -> 'void':
 				f=open('save.txt','w')
 				f.write(str(Ganador0)+'\n')
 				f.write(str(Ganador1)+'\n')                #Se abre el 'save.txt' y se escribe los resultados totales en cada fila
-				f.write(str(Ganador2)+'\n')
-				f.close()
+				f.write(str(Ganador2)+'\n')                #Primera fila es las partidas empatadas, la segunda es las ganadas por el Jugador
+				f.close()                                  #Y la tercera es la ganadas por la computadora
 				pygame.quit()
 				sys.exit()	
 	elif Respuesta=="n":
@@ -223,8 +223,8 @@ def otraPartida(Ganador0:int,Ganador1:int,Ganador2:int) -> (bool,bool):
 					f=open('save.txt','w')
 					f.write(str(Ganador0)+'\n')
 					f.write(str(Ganador1)+'\n')                #Si se escoge Si, se abre el 'save.txt' y se escribe los resultados totales en cada fila
-					f.write(str(Ganador2)+'\n')
-					f.close()
+					f.write(str(Ganador2)+'\n')                #Primera fila es las partidas empatadas, la segunda es las ganadas por el Jugador
+					f.close()                                  #Y la tercera es la ganadas por la computadora
 					break	
 				elif Respuesta=="No":                     
 					break                                     
@@ -399,9 +399,9 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 
             	# SI EL EVENTO ES SELECCIONAR LA COLUMNA (HACER JUGADA)
 				elif evento.type == pygame.KEYDOWN:
-					if evento.key == pygame.K_SPACE:
-						Fila=ValidarJugada(Matrix,JugadaColumnaJugador)
-						if Fila==-1:                               
+					if evento.key == pygame.K_SPACE:                                     #ADVERTENCIA: No oprimir el espacio una vez terminada una partida ya que
+						Fila=ValidarJugada(Matrix,JugadaColumnaJugador)                  #el programa lo tomara en cuenta y jugara por usted si selecciona
+						if Fila==-1:                                                     #volver a jugar
 							print("No es posible jugar ahi"+'\n'+"Por favor intente una nueva jugada")                     
 							continue
 						else:
@@ -419,20 +419,20 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 				if Fila==-1:
 					continue                                #Si Fila es -1 es porque no hay casillas libres, entonces repite el proceso
 				else:                                 #Como hay una casilla vacia entonces asigna 2 en la casilla y dibuja el circulo
-					time.sleep(0.3)                   #Esperara 0.3 segundos antes de mostrar la jugada
+					time.sleep(0.3)                     #Esperara 0.3 segundos antes de ejecutar la jugada
 					pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[JugadaColumnaCPU], FilaCirculo[Fila]), 25, 0)
 					Matrix[Fila][JugadaColumnaCPU]=2
 					break
 			# NIVEL MEDIO
 			elif nivel==2:
+				time.sleep(0.3)                      #Esperara 0.3 segundos antes de ejecutar la jugada
 				if JugadaPrimeraVez==True:            #Si es la primera jugada de la partida, juega una casilla random
 					while JugadaPrimeraVez==True:
 						if Matrix[p][q]==0:  
-							time.sleep(0.3)           #Esperara 0.3 segundos antes de mostrar la jugada
 							Matrix[p][q]=2
 							pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
 							JugadaPrimeraVez=False
-						else:
+						elif Matrix[p][q]!=0:
 							q=random.randint(0,6)  
 					break                                                            #Se le coloca un break para salir del ciclo inicial
 				else:
@@ -494,6 +494,7 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 		pygame.display.flip()
 	return Matrix, JugadaPrimeraVez, p, q, Linea, JugadaColumnaJugador
 
+
 def DeterminarLinea(N:int, M:int, Matrix:int, p:int, q:int, Linea:int) -> int:
 	#Precondicion: (%exist i: 0<=i<=5: Linea=i)
 	#Postcondicion: (%exist i: 0<=i<=5: Linea=i)
@@ -539,6 +540,8 @@ def DeterminarLinea(N:int, M:int, Matrix:int, p:int, q:int, Linea:int) -> int:
 
 	return Linea
 
+
+
 def DeterminarJugadaValida (N:int, M:int, Matrix:int, i:int, j:int) -> bool:
 	#Precondicion: N>0 and M>0
 	#Postcondicion: Valida=False \/ Valida=True
@@ -559,6 +562,8 @@ def DeterminarJugadaValida (N:int, M:int, Matrix:int, i:int, j:int) -> bool:
 
 	return Valida
  
+
+
 def ResaltarLinea(a:int, b:int, c:int, d:int, e:int, f:int, g:int, h:int) -> 'void':
 	#Precondicion: (%forall i: i={a,b,c,d}: i=1 \/ i=2 )
 	#Poscondicion: True
@@ -574,9 +579,11 @@ def ResaltarLinea(a:int, b:int, c:int, d:int, e:int, f:int, g:int, h:int) -> 'vo
 
 	pygame.display.flip()
 
+
 def DesplegarResultadoFinal(Ganador0:int, Ganador1:int, Ganador2:int) -> 'Void':
 	#Precondicion: ganador1>=0 and ganador2>=0 and ganador0>=0
 	#Postcondicion: True
+
 	print("El resultado final es:")
 	print("Total partidas ganadas por "+str(nombreJugador))
 	print(Ganador1)
@@ -585,9 +592,11 @@ def DesplegarResultadoFinal(Ganador0:int, Ganador1:int, Ganador2:int) -> 'Void':
 	print("Total partidas empatadas")
 	print(Ganador0)
 
+
 def ContarGanadorPartida(Ganador, Ganador0, Ganador1, Ganador2) -> int:
 	#Precondicion: Ganador=0 or Ganador=1 or Ganador=2
 	#Postcondicion: Ganador0>=0 and Ganador1>=0 and Ganador2>=0
+
 	if Ganador==0:
 		Ganador0=Ganador0+1
 	elif Ganador==1:
@@ -687,6 +696,8 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'                  # Centrar la ventana a l
 pantalla = pygame.display.set_mode((ANCHO, ALTO))       # Configurando la pantalla
 pygame.display.set_caption("Juego Equipo 4")            # Coloca titulo a nuestra pantalla
 reloj = pygame.time.Clock() 
+
+
 
 Ganador0,Ganador1,Ganador2=Reanudar(Ganador0, Ganador1, Ganador2)
 # CICLO PRINCIPAL DEL PROGRAMA:
