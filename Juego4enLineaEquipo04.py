@@ -271,6 +271,33 @@ def CambiarTurno(turno:int) -> int:
 
     return turno
 
+# PROCEDIMIENTO PARA DIBUJAR EL TABLERO
+def DibujarTablero():
+#Precondicion
+
+    # Cuadrado exterior
+    pygame.draw.line(pantalla, VERDE, (130, 90), (130, 620))
+    pygame.draw.line(pantalla, VERDE, (1120, 90), (1120, 620))
+    pygame.draw.line(pantalla, VERDE, (130, 90), (1120, 90))
+    pygame.draw.line(pantalla, VERDE, (130, 620), (1120, 620))
+
+    # Filas
+    pygame.draw.line(pantalla, VERDE, (130, 178), (1120, 178))
+    pygame.draw.line(pantalla, VERDE, (130, 266), (1120, 266))
+    pygame.draw.line(pantalla, VERDE, (130, 354), (1120, 354))         #Esto es para dibujar el tablero 
+    pygame.draw.line(pantalla, VERDE, (130, 442), (1120, 442))
+    pygame.draw.line(pantalla, VERDE, (130, 530), (1120, 530))
+
+    # Columnas
+    pygame.draw.line(pantalla, VERDE, (272, 90), (272, 620))
+    pygame.draw.line(pantalla, VERDE, (414, 90), (414, 620))
+    pygame.draw.line(pantalla, VERDE, (556, 90), (556, 620))
+    pygame.draw.line(pantalla, VERDE, (698, 90), (698, 620))
+    pygame.draw.line(pantalla, VERDE, (840, 90), (840, 620))
+    pygame.draw.line(pantalla, VERDE, (982, 90), (982, 620))
+
+    pygame.display.flip()
+
 # PROCEDIMIENTO PARA INICIALIZAR LA PARTIDA
 def InicializarPartida(pantalla:int,PrimeraPartida:bool, Ganador:int, N:int, M:int) -> (str,int,bool):
     """ Descripcion: Este procedimiento inicializa el tablero, recibe como parametros la variable pantalla, utilizada para
@@ -288,7 +315,7 @@ def InicializarPartida(pantalla:int,PrimeraPartida:bool, Ganador:int, N:int, M:i
     nombreJugador=str(input("Ingrese su nombre: "))
     print("Indique  el nivel que desea jugar")
     print("Nivel Básico: Tipee 1.")                                 #Aqui se le pide al usuario ingresar su nombre y un nivel
-    print("Nivel Medio: Tipee 2.")                                  #Si tipea algo mas que 1 o 2 en nivel, se le avisara que solo
+    print("Nivel Medio: Tipee 2. ")                                  #Si tipea algo mas que 1 o 2 en nivel, se le avisara que solo
     while True:                                                     #puede tipear Nivel 1 o Nivel 2
         nivel=int(input("Nivel: "))
         if nivel==1:
@@ -302,6 +329,7 @@ def InicializarPartida(pantalla:int,PrimeraPartida:bool, Ganador:int, N:int, M:i
     #INICIALIZACION DEL TABLERO
     pantalla.fill(NEGRO)
     pygame.display.flip()
+    DibujarTablero()
     Matrix=[[0 for x in range(M)] for x in range(N)]             #Pone todas las casillas en 0 para iniciar la partida
 
 
@@ -372,6 +400,27 @@ def seguirJugando(turno:int, primeraJugadaUsuario:bool,Ganador0:int,Ganador1:int
             return False
     return primeraJugadaUsuario
 
+# PROCEDIMIENTO PARA DIBUJAR CIRCULOS
+def DibujarCirculo(Columna:int,Fila:int,turno:int):
+#Coordenadas de circulos
+    ColumnaCirculo=[205,346,486,627,768,909,1050]        #Estas son las coordenadas de los circulos en el tablero
+    FilaCirculo=[135,220,310,395,485,575]
+
+    color = AZUL if turno == 2 else BLANCO
+
+    pygame.draw.circle(pantalla, color, (ColumnaCirculo[Columna], FilaCirculo[Fila]), 25, 0)
+    pygame.display.flip()
+
+# PROCEDIMIENTO PARA DIBUJAR LINEAS DE SELECCION
+def DibujarLinea(L:int):
+    ini = [(i, 50) for i in range(130, 977, 141)]
+    fin = [(i, 50) for i in range(271, 1118, 141)]
+
+    pygame.draw.line(pantalla, NEGRO, ini[(L+6)%7], fin[(L+6)%7], 7)
+    pygame.draw.line(pantalla, BLANCO, ini[L], fin[L], 7)
+
+    pygame.display.flip()
+
 
 # FUNCION PARA OBTENER LA JUGADA TANTO DEL USUARIO COMO DEL COMPUTADOR
 def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:str, N:int, M:int, Matrix:[int], JugadaPrimeraVez:bool, Linea:int, p:int, q:int, Ganador0:int, Ganador1:int, Ganador2:int) -> 'void':
@@ -386,30 +435,9 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
     #Precondicion: 
     assert(N>0 and M>0 and (turno==1 or turno==2) and (nivel==1 or nivel==2))
 
-    #Coordenadas de circulos
-    ColumnaCirculo=[205,346,486,627,768,909,1050]        #Estas son las coordenadas de los circulos en el tablero
-    FilaCirculo=[135,220,310,395,485,575]
-
-    #Lineas De seleccion:
-    Linea0Ini=(130,50)
-    Linea0Fin=(271,50)
-    Linea1Ini=(271,50)
-    Linea1Fin=(412,50)
-    Linea2Ini=(412,50)                        #Estas son las coordenadas de la Linea blanca que sirve para seleccionar la jugada
-    Linea2Fin=(553,50)
-    Linea3Ini=(553,50)
-    Linea3Fin=(694,50)
-    Linea4Ini=(694,50)
-    Linea4Fin=(835,50)
-    Linea5Ini=(835,50)
-    Linea5Fin=(976,50)
-    Linea6Ini=(976,50)
-    Linea6Fin=(1117,50)
-
-    finJugada=0
-    #while True:
     # Hacer que el juego corrar a una velocidad que deseemos
     reloj.tick(FPS)
+
     # TURNO DEL USUARIO
     if turno==1:
         print("Su turno, " + nombreJugador)
@@ -425,28 +453,10 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
                         JugadaColumnaJugador=0
                     else:                                                 #Cada vez que se oprima el mouse, cambia de Columna, cuando llegue a la 6, se devuelve
                         JugadaColumnaJugador=JugadaColumnaJugador+1       #a la 0
-                    
-                    if JugadaColumnaJugador==0:
-                        pygame.draw.line(pantalla, NEGRO, Linea6Ini, Linea6Fin, 7)
-                        pygame.draw.line(pantalla, BLANCO, Linea0Ini, Linea0Fin, 7)
-                    elif JugadaColumnaJugador==1:
-                        pygame.draw.line(pantalla, NEGRO, Linea0Ini, Linea0Fin, 7)
-                        pygame.draw.line(pantalla, BLANCO, Linea1Ini, Linea1Fin, 7)
-                    elif JugadaColumnaJugador==2:
-                        pygame.draw.line(pantalla, NEGRO, Linea1Ini, Linea1Fin, 7)
-                        pygame.draw.line(pantalla, BLANCO, Linea2Ini, Linea2Fin, 7)      #Aqui se dibuja la linea y se borra la linea anteriormente creada
-                    elif JugadaColumnaJugador==3:
-                        pygame.draw.line(pantalla, NEGRO, Linea2Ini, Linea2Fin, 7)
-                        pygame.draw.line(pantalla, BLANCO, Linea3Ini, Linea3Fin, 7)
-                    elif JugadaColumnaJugador==4:
-                        pygame.draw.line(pantalla, NEGRO, Linea3Ini, Linea3Fin, 7)
-                        pygame.draw.line(pantalla, BLANCO, Linea4Ini, Linea4Fin, 7)
-                    elif JugadaColumnaJugador==5:
-                        pygame.draw.line(pantalla, NEGRO, Linea4Ini, Linea4Fin, 7)
-                        pygame.draw.line(pantalla, BLANCO, Linea5Ini, Linea5Fin, 7)
-                    elif JugadaColumnaJugador==6:
-                        pygame.draw.line(pantalla, NEGRO, Linea5Ini, Linea5Fin, 7)
-                        pygame.draw.line(pantalla, BLANCO, Linea6Ini, Linea6Fin, 7)
+
+                    DibujarLinea(JugadaColumnaJugador)
+
+
                 #Dibuja un circulo dependiendo de donde este la posicion de la Linea
 
                 # SI EL EVENTO ES SELECCIONAR LA COLUMNA (HACER JUGADA)
@@ -457,12 +467,11 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
                             print("No es posible jugar ahi"+'\n'+"Por favor intente una nueva jugada")                     
                             continue
                         else:
-                            pygame.draw.circle(pantalla, BLANCO, (ColumnaCirculo[JugadaColumnaJugador], FilaCirculo[Fila]), 25, 0)
-                            Matrix[Fila][JugadaColumnaJugador]=1
-                            pygame.display.flip()
-                            return Matrix, JugadaPrimeraVez, p, q, Linea, JugadaColumnaJugador          #Se le agrega un Return aqui para cuando el jugador termine
+                            DibujarCirculo(JugadaColumnaJugador, Fila, turno)
+                            Matrix[Fila][JugadaColumnaJugador] = 1
+                            return Matrix, JugadaPrimeraVez, p, q, Linea, JugadaColumnaJugador      #Se le agrega un Return aqui para cuando el jugador termine su jugada
             pygame.display.flip()
-                                                                                                                    #su jugada
+                                                                                                                    
     # TURNO DEL COMPUTADOR
     elif turno==2:
         print("Juega la pc")
@@ -470,13 +479,12 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
         if nivel==1:
             JugadaColumnaCPU=random.randint(0,6)        #Como es el nivel basico, se hace un random entre 0 y 6 (las posibles columnas)
             Fila=ValidarJugada(Matrix,JugadaColumnaCPU) #Y llama al proc ValidarJugada a ver si hay casillas vacias en esa col 
-            #if Fila==-1:
                                                   #Si Fila es -1 es porque no hay casillas libres, entonces repite el proceso
             if Fila != -1:                                   #Como hay una casilla vacia entonces asigna 2 en la casilla y dibuja el circulo
                 time.sleep(0.3)                     #Esperara 0.3 segundos antes de ejecutar la jugada
-                pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[JugadaColumnaCPU], FilaCirculo[Fila]), 25, 0)
+                DibujarCirculo(JugadaColumnaCPU,Fila,turno)
+                print(JugadaColumnaCPU,Fila,turno)
                 Matrix[Fila][JugadaColumnaCPU]=2
-                #break
         # NIVEL MEDIO
         elif nivel==2:
             time.sleep(0.3)                      #Esperara 0.3 segundos antes de ejecutar la jugada
@@ -484,11 +492,12 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
                 while JugadaPrimeraVez==True:
                     if Matrix[p][q]==0:  
                         Matrix[p][q]=2
-                        pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
+                        DibujarCirculo(q,p,turno)
+                        print(q,p,turno)
+
                         JugadaPrimeraVez=False   #Ya jugo la primera vez, le asigna False a este booleano
                     else:
                         q=random.randint(0,6)     #Como no hay una casilla vacia donde quiso jugar, hace un random de otra fila
-                #break                                                            #Se le coloca un break para salir del ciclo inicial
             else:                                     #Como ya no es la primera jugada, entonces procede a la estrategia
                 Linea=DeterminarLinea(N, M, Matrix, p, q, Linea)
                 if Linea==0:                          #En estas guardias ya escogio la linea que intentara construir                           
@@ -511,33 +520,10 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
                     while Valida==False:
                         p,q=random.randint(0,N-1), random.randint(0,M-1)    #Como no puede seguir jugando alli, busca de manera
                         Valida=DeterminarJugadaValida(N, M, Matrix, p, q)   #aleatoria otra casilla donde pueda construir una linea       
-                    Matrix[p][q]=2                                          #sale del ciclo porque Valida es True y ya puede ocupar la casilla
-                pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0) #pygame.draw dibuja el circulo
-                pygame.display.flip()
+                Matrix[p][q]=2                                          #sale del ciclo porque Valida es True y ya puede ocupar la casilla
+                DibujarCirculo(q,p,turno)
+                print(q,p,turno)
 
-        #######TABLERO GRAFICO##### 
-        # Cuadrado exterior
-        pygame.draw.line(pantalla, VERDE, (130, 90), (130, 620))
-        pygame.draw.line(pantalla, VERDE, (1120, 90), (1120, 620))
-        pygame.draw.line(pantalla, VERDE, (130, 90), (1120, 90))
-        pygame.draw.line(pantalla, VERDE, (130, 620), (1120, 620))
-
-        # Filas
-        pygame.draw.line(pantalla, VERDE, (130, 178), (1120, 178))
-        pygame.draw.line(pantalla, VERDE, (130, 266), (1120, 266))
-        pygame.draw.line(pantalla, VERDE, (130, 354), (1120, 354))         #Esto es para dibujar el tablero 
-        pygame.draw.line(pantalla, VERDE, (130, 442), (1120, 442))
-        pygame.draw.line(pantalla, VERDE, (130, 530), (1120, 530))
-
-        # Columnas
-        pygame.draw.line(pantalla, VERDE, (272, 90), (272, 620))
-        pygame.draw.line(pantalla, VERDE, (414, 90), (414, 620))
-        pygame.draw.line(pantalla, VERDE, (556, 90), (556, 620))
-        pygame.draw.line(pantalla, VERDE, (698, 90), (698, 620))
-        pygame.draw.line(pantalla, VERDE, (840, 90), (840, 620))
-        pygame.draw.line(pantalla, VERDE, (982, 90), (982, 620))
-
-        pygame.display.flip()
     #Postcondicion
     #assert((turno==1 and Matrix[Fila][JugadaColumnaJugador]==1) or (turno==2 and nivel==2 and Matrix[p][q]==2) 
     #or (turno==2 and nivel==1 and Matrix[Fila][JugadaColumnaCPU]==2))
@@ -616,7 +602,7 @@ def DeterminarLinea(N:int, M:int, Matrix:int, p:int, q:int, Linea:int) -> int:
             Linea=5
 
     return Linea
-
+# PROCEDIMIENTO PARA DETERMINAR JUGADA VALIDA DEL COMPUTADOR
 def DeterminarJugadaValida (N:int, M:int, Matrix:int, i:int, j:int) -> bool:
     #Precondicion: N>0 and M>0
     #Postcondicion: Valida=False \/ Valida=True
@@ -637,6 +623,7 @@ def DeterminarJugadaValida (N:int, M:int, Matrix:int, i:int, j:int) -> bool:
 
     return Valida
 
+# PROCEDIMIENTO PARA RESALTAR LA LINEA GANADORA 
 def ResaltarLinea(a:int, b:int, c:int, d:int, e:int, f:int, g:int, h:int) -> 'void':
     #Precondicion: (%forall i: i={a,b,c,d}: i=1 \/ i=2 )
     #Poscondicion: True
@@ -652,7 +639,7 @@ def ResaltarLinea(a:int, b:int, c:int, d:int, e:int, f:int, g:int, h:int) -> 'vo
 
     pygame.display.flip()
 
-
+# PROCEDIMIENTO PARA DESPLEGAR EL RESULTADO FINAL
 def DesplegarResultadoFinal(Ganador0:int, Ganador1:int, Ganador2:int) -> 'Void':
     #Precondicion: ganador1>=0 and ganador2>=0 and ganador0>=0
     #Postcondicion: True
@@ -665,7 +652,7 @@ def DesplegarResultadoFinal(Ganador0:int, Ganador1:int, Ganador2:int) -> 'Void':
     print("Total partidas empatadas")
     print(Ganador0)
 
-
+# PROCEDIMIENTO PARA CONTAR EL GANADOR POR PARTIDA
 def ContarGanadorPartida(Ganador, Ganador0, Ganador1, Ganador2) -> int:
     #Precondicion: Ganador=0 or Ganador=1 or Ganador=2
     #Postcondicion: Ganador0>=0 and Ganador1>=0 and Ganador2>=0
@@ -678,8 +665,9 @@ def ContarGanadorPartida(Ganador, Ganador0, Ganador1, Ganador2) -> int:
         Ganador2=Ganador2+1
 
     return Ganador0, Ganador1, Ganador2
+
 # PROCEDIMIENTO PARA REANUDAR LA PARTIDA
-def Reanudar(Ganador0:int, Ganador1:int, Ganador2:int,Matrix:[int]) -> int:
+def Reanudar() -> (int,int,int,[[int]]):
     ExisteSave=os.path.isfile('save.txt')                      #Buscamos si existe el archivo 'save.txt', si no existe sale del proceso, si existe se le pregunta si se desea
     if ExisteSave==True:                                       #Seguir jugando la partida anterior
         print("¿Desea seguir jugando la partida anterior?")
@@ -696,9 +684,9 @@ def Reanudar(Ganador0:int, Ganador1:int, Ganador2:int,Matrix:[int]) -> int:
                 continue
     else:
         Guardado=False
-    
-    #Matrix=[[0 for x in range(M)] for x in range(N)]       #Inicializacion de la Matriz
-    Matrix=[]
+
+    Matrix = []
+    Ganador0,Ganador1,Ganador2 = 0,0,0
     if Guardado:
         with open('save.txt','r') as file: 
             Ganador0=int(file.readline().split(" ")[1].rstrip())                  #Luego si Guardado==True, se carga los scores de la partida pasada
@@ -709,7 +697,7 @@ def Reanudar(Ganador0:int, Ganador1:int, Ganador2:int,Matrix:[int]) -> int:
                 for i in range(6):
                     Matrix.append(list(map(int,file.readline().rstrip().split(" "))))
 
-    return Ganador0, Ganador1, Ganador2,Matrix
+    return Ganador0, Ganador1, Ganador2,Matrix,Guardado
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -751,6 +739,7 @@ reloj = pygame.time.Clock()
 # turno: int                       // Variable del turno de los jugadores, vale 1 si el turno es del usuario y 2 si es del CPU. 
 #                                  // Cambia una vez que pasa por el ciclo (que se obtiene la jugada)
 # JugadaPrimeraVez: bool           // Variable usada para ver si el CPU en el nivel medio ya jugo por primera vez
+# primeraJugadaUsuario: bool       // Variable usada para ver si el usuario ya jugo por primera vez
 # Linea: int                       // Variable que contiene la Linea que el CPU desea jugar en el nivel medio
 # jugada: int                      // Variable que guarda la jugada del jugador y del CPU en el nivel 1
 # Ganador: int                     // Variable que contiene el Ganador de la partida (Siempre sera 0 hasta que se decida si se queda asi o cambia a 1 o 2)
@@ -774,10 +763,18 @@ jugarOtra, PrimeraPartida=True,True
 Ganador0, Ganador1, Ganador2=0,0,0
 Tablero=[]
 
-Ganador0,Ganador1,Ganador2,Tablero=Reanudar(Ganador0, Ganador1, Ganador2,Tablero)
+Ganador0,Ganador1,Ganador2,TableroG,Guardado = Reanudar()
 # CICLO PRINCIPAL DEL PROGRAMA:
 while jugarOtra:
     Ganador, nombreJugador, nivel, Tablero, Linea, q, p, JugadaPrimeraVez, turno = InicializarPartida(pantalla, PrimeraPartida, Ganador, N, M) 
+    if TableroG:
+        Tablero = TableroG
+        for i in range(N):
+            for j in range(M):
+                if Tablero[i][j]!=0:
+                    DibujarCirculo(j,i,Tablero[i][j])
+        turno = 1
+        JugadaPrimeraVez = False 
     siguePartida=True
     primeraJugadaUsuario = True
     while siguePartida:
@@ -789,7 +786,8 @@ while jugarOtra:
 
     DesplegarGanador(nombreJugador, Ganador) 
     Ganador0, Ganador1, Ganador2 = ContarGanadorPartida(Ganador, Ganador0, Ganador1, Ganador2)
-    PrimeraPartida, jugarOtra = otraPartida(Ganador0,Ganador1,Ganador2,Tablero)  
+    PrimeraPartida, jugarOtra = otraPartida(Ganador0,Ganador1,Ganador2,Tablero)
+    Guardado = False
 
 DesplegarResultadoFinal(Ganador0, Ganador1, Ganador2) 
 pygame.quit()
