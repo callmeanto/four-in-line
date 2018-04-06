@@ -322,12 +322,21 @@ def ValidarJugada(Matrix:[int], Columna:int) -> bool:
 	assert(0<=Columna<=6)
 
 	Fila=5
+	cota=Fila
+	#Invariante y cota
+	assert(0<=Fila<=5)
+	assert(cota>=0)
 	while Fila>=0 and Matrix[Fila][Columna]!=0:
 		Fila=Fila-1                              #Revisa Fila por fila en la columna que jugo el usuario hasta que encuentre una vacia
                                                  #Si Fila==-1 es porque recorrio toda la fila (de la posicion 5 a la 0) 
 							                     #y no encontro alguna casilla con 0
+		#Invariante y cota en cada iteracion
+		assert(0<=Fila<=5)
+		assert(cota>=Fila)
+		cota=Fila
+		assert(cota>=0)			
     #Postcondicion
-	assert((Fila==-1 and all(Matrix[Fila][Columna]!=0 for Fila in range(6)) ) or (0<=Fila<=5 and any(Matrix[Fila][Columna]==0 for Fila in range(6))))
+	assert((Fila==-1 and all(Matrix[Fila][Columna]!=0 for Fila in range(N)) ) or (0<=Fila<=5 and any(Matrix[Fila][Columna]==0 for Fila in range(N))))
 
     # Salida 
 	return Fila
@@ -497,9 +506,12 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 		pygame.draw.line(pantalla, VERDE, (982, 90), (982, 620))
 
 		pygame.display.flip()
+    #Postcondicion
+	assert((turno==1 and Matrix[Fila][JugadaColumnaJugador]==1) or (turno==2 and nivel==2 and Matrix[p][q]==2) 
+    	or (turno==2 and nivel==1 and Matrix[Fila][JugadaColumnaCPU]==2))
 	return Matrix, JugadaPrimeraVez, p, q, Linea, JugadaColumnaJugador
 
-
+# FUNCION PARA DETERMINAR LA LINEA QUE INTENTARA CONSTRUIR EL COMPUTADOR (NIVEL MEDIO)
 def DeterminarLinea(N:int, M:int, Matrix:int, p:int, q:int, Linea:int) -> int:
 	#Precondicion: (%exist i: 0<=i<=5: Linea=i)
 	#Postcondicion: (%exist i: 0<=i<=5: Linea=i)
