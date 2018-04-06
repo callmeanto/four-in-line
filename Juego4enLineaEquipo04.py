@@ -312,19 +312,24 @@ def InicializarPartida(pantalla:int,PrimeraPartida:bool, Ganador:int, N:int, M:i
     assert(N>0 and M>0 and 0<=Ganador<=2)
 
     #ENTRADA DE DATOS
-    nombreJugador=str(input("Ingrese su nombre: "))
+    while True:
+        nombreJugador=str(input("Ingrese su nombre: "))
+        try:
+            assert(len(nombreJugador)>=3)             #Programa robusto
+            break
+        except:
+            print("Por favor, introduzca su nombre")
+
     print("Indique  el nivel que desea jugar")
     print("Nivel Básico: Tipee 1.")                                 #Aqui se le pide al usuario ingresar su nombre y un nivel
     print("Nivel Medio: Tipee 2. ")                                  #Si tipea algo mas que 1 o 2 en nivel, se le avisara que solo
     while True:                                                     #puede tipear Nivel 1 o Nivel 2
         nivel=int(input("Nivel: "))
-        if nivel==1:
+        try:
+            assert(1<=nivel<=2)
             break
-        elif nivel==2:
-            break
-        else:
+        except:
             print("Solo puede ingresar Nivel 1 o Nivel 2")
-            continue
 
     #INICIALIZACION DEL TABLERO
     pantalla.fill(NEGRO)
@@ -483,7 +488,6 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
             if Fila != -1:                                   #Como hay una casilla vacia entonces asigna 2 en la casilla y dibuja el circulo
                 time.sleep(0.3)                     #Esperara 0.3 segundos antes de ejecutar la jugada
                 DibujarCirculo(JugadaColumnaCPU,Fila,turno)
-                print(JugadaColumnaCPU,Fila,turno)
                 Matrix[Fila][JugadaColumnaCPU]=2
         # NIVEL MEDIO
         elif nivel==2:
@@ -493,8 +497,6 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
                     if Matrix[p][q]==0:  
                         Matrix[p][q]=2
                         DibujarCirculo(q,p,turno)
-                        print(q,p,turno)
-
                         JugadaPrimeraVez=False   #Ya jugo la primera vez, le asigna False a este booleano
                     else:
                         q=random.randint(0,6)     #Como no hay una casilla vacia donde quiso jugar, hace un random de otra fila
@@ -522,7 +524,6 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
                         Valida=DeterminarJugadaValida(N, M, Matrix, p, q)   #aleatoria otra casilla donde pueda construir una linea       
                 Matrix[p][q]=2                                          #sale del ciclo porque Valida es True y ya puede ocupar la casilla
                 DibujarCirculo(q,p,turno)
-                print(q,p,turno)
 
     #Postcondicion
     #assert((turno==1 and Matrix[Fila][JugadaColumnaJugador]==1) or (turno==2 and nivel==2 and Matrix[p][q]==2) 

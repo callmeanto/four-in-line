@@ -1,4 +1,10 @@
 Empatadas: 0
 Usuario: 2
 Computador: 0
-Partida: 0
+Partida: 1
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+2 1 0 0 0 0 0
+2 1 0 0 0 0 0
+2 1 2 0 0 0 0
