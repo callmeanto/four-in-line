@@ -169,16 +169,32 @@ def QuitGame(Ganador0:int, Ganador1:int, Ganador2:int, Matrix:[int]) -> 'void':
 		except:
 			print("Solo se puede ingresar 'y' si quiere o 'n' sino")  #Si se escribe algo mas que 'y' o 'n' informa que solo puede escoger entre esos dos
 	if Respuesta=="y":
-				f=open('save.txt','w')
-				f.write(str(Ganador0)+'\n')
-				f.write(str(Ganador1)+'\n')                #Se abre el 'save.txt' y se escribe los resultados totales en cada fila
-				f.write(str(Ganador2)+'\n')                #Primera fila es las partidas empatadas, la segunda es las ganadas por el Jugador
-				f.close()                                  #Y la tercera es la ganadas por la computadora
-				pygame.quit()
-				sys.exit()	
+		siguePartida=1
+		GuardarArchivo(Matrix,Ganador0,Ganador1,Ganador2,siguePartida)
+		pygame.quit()
+		sys.exit()	
 	elif Respuesta=="n":
-				pygame.quit()                              #Se cierra el juego y no se guarda nada si se selecciona 'n'
-				sys.exit()
+		pygame.quit()                              #Se cierra el juego y no se guarda nada si se selecciona 'n'
+		sys.exit()
+
+# PROCEDIMIENTO PARA GUARDAR LA PARTIDA
+def GuardarArchivo(Matrix:[int],Ganador0:int,Ganador1:int,Ganador2:int,siguePartida:int) :
+	#Descripcion: Recibe el estado del tablero y los contadores por ganador (0 es empatadas, 1 es usuario y 2 es computador)
+	#recibe un bool para saber si escribe el estado del tablero o no. Si la partida finalizo, no se guarda el tablero.
+	#Precondicion:
+	assert(any((Matrix[i][j]!=0 for i in range(N)) for j in range(M)))
+
+	with open('save.txt','w') as file:
+		file.write("Empatadas: "+str(Ganador0)+'\n')
+		file.write("Usuario: "+str(Ganador1)+'\n')                #Se abre el 'save.txt' y se escribe los resultados totales en cada fila
+		file.write("Computador: "+str(Ganador2)+'\n')
+		file.write("Partida: "+str(siguePartida)+'\n')
+		if siguePartida:
+			for row in Matrix:
+				file.write(" ".join(list(map(str, row)))+'\n')
+	#Postcondicion
+	assert(True)
+		                                                          
 
 
 # PROCEDIMIENTO PARA MOSTRAR EL GANADOR 
@@ -198,7 +214,7 @@ def DesplegarGanador(nombreJugador:str ,Ganador:int) -> 'void':
 
  
 # FUNCION PARA SABER SI EL JUGADOR QUIERE JUGAR OTRA PARTIDA
-def otraPartida(Ganador0:int,Ganador1:int,Ganador2:int) -> (bool,bool):
+def otraPartida(Ganador0:int,Ganador1:int,Ganador2:int,Matrix:[int]) -> (bool,bool):
     #Descripcion: Las variables de entrada son los contadores de cada ganador por partida, se reciben
     #             para poder ser almacenados en el archivo. Retorna 2 booleanos que dicen si es la primera
     #             partida y si el usuario quiere seguir jugando otra partida
@@ -220,11 +236,8 @@ def otraPartida(Ganador0:int,Ganador1:int,Ganador2:int) -> (bool,bool):
 			while True:
 				Respuesta=str(input("Si o No?"+'\n'))
 				if Respuesta=="Si":
-					f=open('save.txt','w')
-					f.write(str(Ganador0)+'\n')
-					f.write(str(Ganador1)+'\n')                #Si se escoge Si, se abre el 'save.txt' y se escribe los resultados totales en cada fila
-					f.write(str(Ganador2)+'\n')                #Primera fila es las partidas empatadas, la segunda es las ganadas por el Jugador
-					f.close()                                  #Y la tercera es la ganadas por la computadora
+					siguePartida=0
+					GuardarArchivo(Matrix,Ganador0,Ganador1,Ganador2,siguePartida)         
 					break	
 				elif Respuesta=="No":                     
 					break                                     
@@ -326,10 +339,8 @@ def ValidarJugada(Matrix:[int], Columna:int) -> bool:
 	#Invariante y cota
 	assert(0<=Fila<=5)
 	assert(cota>=0)
-	while Fila>=0 and Matrix[Fila][Columna]!=0:
-		Fila=Fila-1                              #Revisa Fila por fila en la columna que jugo el usuario hasta que encuentre una vacia
-                                                 #Si Fila==-1 es porque recorrio toda la fila (de la posicion 5 a la 0) 
-							                     #y no encontro alguna casilla con 0
+	while Fila>=0 and Matrix[Fila][Columna]!=0: #Revisa Fila por fila en la columna que jugo el usuario hasta que encuentre una vacia
+		Fila=Fila-1                             #Si Fila==-1 es porque recorrio toda la fila (de la posicion 5 a la 0)
 		#Invariante y cota en cada iteracion
 		assert(0<=Fila<=5)
 		assert(cota>=Fila)
@@ -374,23 +385,28 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 	Linea6Ini=(976,50)
 	Linea6Fin=(1117,50)
 
+	contador=0
+	finJugada=0
 	while True:
         # Hacer que el juego corrar a una velocidad que deseemos
 		reloj.tick(FPS)
 		# TURNO DEL USUARIO
 		if turno==1:
+			finJugada+=1
+			if contador==0:
+				print("Su turno, "+nombreJugador)
 			for evento in pygame.event.get():
-            	# Si el evento que esta ocurriendo es que se acabo el juego, entonces cerrarlo
+		    	# Si el evento que esta ocurriendo es que se acabo el juego, entonces cerrarlo
 				if evento.type == pygame.QUIT:
 					QuitGame(Ganador0, Ganador1, Ganador2,Matrix)
-            		# Dibujar una Linea cuando se presiona el mouse, y borra la anterior dibujada
+		    		# Dibujar una Linea cuando se presiona el mouse, y borra la anterior dibujada
 				# SI EL EVENTO ES MOVERSE ENTRE COLUMNAS
 				elif evento.type == pygame.MOUSEBUTTONDOWN:
 					if JugadaColumnaJugador==6:
 						JugadaColumnaJugador=0
 					else:                                                 #Cada vez que se oprima el mouse, cambia de Columna, cuando llegue a la 6, se devuelve
 						JugadaColumnaJugador=JugadaColumnaJugador+1       #a la 0
-                    
+		            
 					if JugadaColumnaJugador==0:
 						pygame.draw.line(pantalla, NEGRO, Linea6Ini, Linea6Fin, 7)
 						pygame.draw.line(pantalla, BLANCO, Linea0Ini, Linea0Fin, 7)
@@ -412,9 +428,9 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 					elif JugadaColumnaJugador==6:
 						pygame.draw.line(pantalla, NEGRO, Linea5Ini, Linea5Fin, 7)
 						pygame.draw.line(pantalla, BLANCO, Linea6Ini, Linea6Fin, 7)
-            	#Dibuja un circulo dependiendo de donde este la posicion de la Linea
+		    	#Dibuja un circulo dependiendo de donde este la posicion de la Linea
 
-            	# SI EL EVENTO ES SELECCIONAR LA COLUMNA (HACER JUGADA)
+		    	# SI EL EVENTO ES SELECCIONAR LA COLUMNA (HACER JUGADA)
 				elif evento.type == pygame.KEYDOWN:
 					if evento.key == pygame.K_SPACE:                                     #ADVERTENCIA: No oprimir el espacio una vez terminada una partida ya que
 						Fila=ValidarJugada(Matrix,JugadaColumnaJugador)                  #el programa lo tomara en cuenta y jugara por usted si selecciona
@@ -426,9 +442,10 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 							Matrix[Fila][JugadaColumnaJugador]=1
 							pygame.display.flip()
 							return Matrix, JugadaPrimeraVez, p, q, Linea, JugadaColumnaJugador          #Se le agrega un Return aqui para cuando el jugador termine
-          		                                                                                        #su jugada
-		# TURNO DEL COMPUTADOR
+		  		                                                                                        #su jugada
+	    # TURNO DEL COMPUTADOR
 		elif turno==2:
+			finJugada+=1
 			# NIVEL BÁSICO
 			if nivel==1:
 				JugadaColumnaCPU=random.randint(0,6)        #Como es el nivel basico, se hace un random entre 0 y 6 (las posibles columnas)
@@ -442,6 +459,7 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 					break
 			# NIVEL MEDIO
 			elif nivel==2:
+				print("Juega la pc")
 				time.sleep(0.3)                      #Esperara 0.3 segundos antes de ejecutar la jugada
 				if JugadaPrimeraVez==True:            #Si es la primera jugada de la partida, juega una casilla random
 					while JugadaPrimeraVez==True:
@@ -481,7 +499,19 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 							Valida=DeterminarJugadaValida(N, M, Matrix, p, q)   #aleatoria otra casilla donde pueda construir una linea       
 						Matrix[p][q]=2                                          #sale del ciclo porque Valida es True y ya puede ocupar la casilla
 						pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
-				break                                                                  #Se le coloca un break para salir del ciclo inicial
+					break
+			print("¿Desea seguir jugando?")
+			while True:
+				y=input("si o no?")
+				try:
+					assert(y=="si" or y=="no")
+					break
+				except:
+					print("Debe responder si o no")
+					continue
+			if y=="no":
+				QuitGame(Ganador0,Ganador1,Ganador2,Matrix)				   
+		contador+=1	                                                               #Se le coloca un break para salir del ciclo inicial
 
 		#######TABLERO GRAFICO##### 
 		# Cuadrado exterior
@@ -513,8 +543,36 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 
 # FUNCION PARA DETERMINAR LA LINEA QUE INTENTARA CONSTRUIR EL COMPUTADOR (NIVEL MEDIO)
 def DeterminarLinea(N:int, M:int, Matrix:int, p:int, q:int, Linea:int) -> int:
-	#Precondicion: (%exist i: 0<=i<=5: Linea=i)
-	#Postcondicion: (%exist i: 0<=i<=5: Linea=i)
+	""" Descripcion: Esta funcion es la que desarrolla la estrategia a seguir por el computador en el nivel medio
+        recibe como parametros N y M que son el tama;o del arreglo, Matrix que es la matriz del tablero, p y q que representan
+        la fila y la columna de la casilla de la ultima jugada del computador, y linea es la linea que intenta construir el computador.
+        Esto retorna un entero entre 0 y 5 que representara la linea que intentara construir el computador. 
+	"""
+	#Precondicion:
+	assert(0<=Linea<=5 and N>0 and M>0) 
+	""""
+	if q+3<=6 and Matrix[p][q+1]==0 and Matrix[p][q+2]==0 and Matrix[p][q+3]==0  :   
+	#Si hay 3 casillas libres a su derecha, intenta construir la linea 0
+		Linea=0
+	elif 0<=q-3 and Matrix[p][q-1]==0 and Matrix[p][q-2]==0 and Matrix[p][q-3]==0 : 
+	#Si hay 3 casillas libres a su izqda, intenta construir la linea 1
+		Linea=1
+	elif 0<=p-3 and Matrix[p-1][q]==0 and Matrix[p-2][q]==0 and Matrix[p-3][q]==0  : 
+	#Si hay 3 casillas libres hacia arriba, intenta construir la linea 1
+		Linea=2
+	elif q+3<=6 and 0<=p-3 and Matrix[p-1][q+1]==0 and Matrix[p-2][q+2]==0 and Matrix[p-3][q+3]==0 : 
+	#Si hay 3 casillas libres diagonal derecha, intenta construir la linea 1
+		Linea=3
+	elif 0<=q-3 and 0<=p-3 and Matrix[p-1][q-1]==0 and Matrix[p-2][q-2]==0 and Matrix[p-3][q-3]==0 : 
+	#Si hay 3 casillas libres diagonal izqda, intenta construir la linea 1
+		Linea=4
+	else:
+		Linea=5        
+
+	if 0<=Linea<=4:
+		Linea=random.randint(0,4)
+		return Linea
+	else: return Linea  """
 
 	#VAR Valida0, Valida1, Valida2, Valida3, Valida4, SigueFila :bool  
 
@@ -557,8 +615,6 @@ def DeterminarLinea(N:int, M:int, Matrix:int, p:int, q:int, Linea:int) -> int:
 
 	return Linea
 
-
-
 def DeterminarJugadaValida (N:int, M:int, Matrix:int, i:int, j:int) -> bool:
 	#Precondicion: N>0 and M>0
 	#Postcondicion: Valida=False \/ Valida=True
@@ -578,8 +634,6 @@ def DeterminarJugadaValida (N:int, M:int, Matrix:int, i:int, j:int) -> bool:
 		Valida=False
 
 	return Valida
- 
-
 
 def ResaltarLinea(a:int, b:int, c:int, d:int, e:int, f:int, g:int, h:int) -> 'void':
 	#Precondicion: (%forall i: i={a,b,c,d}: i=1 \/ i=2 )
@@ -622,11 +676,11 @@ def ContarGanadorPartida(Ganador, Ganador0, Ganador1, Ganador2) -> int:
 		Ganador2=Ganador2+1
 
 	return Ganador0, Ganador1, Ganador2
-
-def Reanudar (Ganador0:int, Ganador1:int, Ganador2:int) -> int:
+# PROCEDIMIENTO PARA REANUDAR LA PARTIDA
+def Reanudar(Ganador0:int, Ganador1:int, Ganador2:int,Matrix:[int]) -> int:
 	ExisteSave=os.path.isfile('save.txt')                      #Buscamos si existe el archivo 'save.txt', si no existe sale del proceso, si existe se le pregunta si se desea
 	if ExisteSave==True:                                       #Seguir jugando la partida anterior
-		print("Desea seguir jugando la partida anterior?")
+		print("¿Desea seguir jugando la partida anterior?")
 		while True:
 			Respuesta=str(input("Si o No?"))
 			if Respuesta=="Si":
@@ -641,20 +695,47 @@ def Reanudar (Ganador0:int, Ganador1:int, Ganador2:int) -> int:
 	else:
 		Guardado=False
 	
-	if Guardado==True:
-		f=open('save.txt','r')
-		Ganador0=int(f.readline().rstrip())                  #Luego si Guardado==True, se carga los scores de la partida pasada
-		Ganador1=int(f.readline().rstrip())                  #Y si Guardado==False, no se hace anda y se comienza desde el inicio
-		Ganador2=int(f.readline().rstrip())
-	else:
-		pass
-	
-	return Ganador0, Ganador1, Ganador2
+	#Matrix=[[0 for x in range(M)] for x in range(N)]       #Inicializacion de la Matriz
+	Matrix=[]
+	if Guardado:
+		with open('save.txt','r') as file: 
+			Ganador0=int(file.readline().split(" ")[1].rstrip())                  #Luego si Guardado==True, se carga los scores de la partida pasada
+			Ganador1=int(file.readline().split(" ")[1].rstrip())                  #Y si Guardado==False, no se hace anda y se comienza desde el inicio
+			Ganador2=int(file.readline().split(" ")[1].rstrip())
+			statusPartida=int(file.readline().split(" ")[1].rstrip())
+			if statusPartida == 1:
+				for i in range(6):
+					Matrix.append(list(map(int,file.readline().rstrip().split(" "))))
+
+	return Ganador0, Ganador1, Ganador2,Matrix
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 #                                 ALGORITMO PRINCIPAL                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+
+#-------------------------#
+# INTERFAZ GRAFICA        #
+#-------------------------#
+
+# CONSTANTES
+# Pantalla
+ALTO = 720       # alto de la ventana
+ANCHO = 1280     # ancho de la ventana
+FPS = 30         # frames per second
+# Colores 
+NEGRO = (0, 0, 0)
+BLANCO = (255, 255, 255)
+ROJO = (255, 0, 0)
+AZUL = (0, 0, 255)
+VERDE = (0, 255, 0)
+
+# Inicializar la pantalla del juego
+pygame.init()
+os.environ['SDL_VIDEO_CENTERED'] = '1'                  # Centrar la ventana a la hora de abrirse
+pantalla = pygame.display.set_mode((ANCHO, ALTO))       # Configurando la pantalla
+pygame.display.set_caption("Juego Equipo 4")            # Coloca titulo a nuestra pantalla
+reloj = pygame.time.Clock() 
 
 
 # VARIABLES Y CONSTANTES
@@ -681,7 +762,6 @@ def Reanudar (Ganador0:int, Ganador1:int, Ganador2:int) -> int:
 # Ganador2:int                     // Contador de veces que ha ganado el computador
 # PrimeraPartida: bool             // Esta variable verifica si es la primera partida que se juega entre el computador y el jugador
 
-
 # INICIALIZACION DE VARIABLES
 N=6
 M=7
@@ -690,33 +770,9 @@ Ganador=0
 esValida=True
 jugarOtra, PrimeraPartida=True,True
 Ganador0, Ganador1, Ganador2=0,0,0
+Tablero=[]
 
-#-------------------------
-# INTERFAZ GRAFICA        
-#-------------------------
-
-# CONSTANTES
-# Pantalla
-ALTO = 720       # alto de la ventana
-ANCHO = 1280     # ancho de la ventana
-FPS = 30         # frames per second
-# Colores 
-NEGRO = (0, 0, 0)
-BLANCO = (255, 255, 255)
-ROJO = (255, 0, 0)
-AZUL = (0, 0, 255)
-VERDE = (0, 255, 0)
-
-# Inicializar la pantalla del juego
-pygame.init()
-os.environ['SDL_VIDEO_CENTERED'] = '1'                  # Centrar la ventana a la hora de abrirse
-pantalla = pygame.display.set_mode((ANCHO, ALTO))       # Configurando la pantalla
-pygame.display.set_caption("Juego Equipo 4")            # Coloca titulo a nuestra pantalla
-reloj = pygame.time.Clock() 
-
-
-
-Ganador0,Ganador1,Ganador2=Reanudar(Ganador0, Ganador1, Ganador2)
+Ganador0,Ganador1,Ganador2,Tablero=Reanudar(Ganador0, Ganador1, Ganador2,Tablero)
 # CICLO PRINCIPAL DEL PROGRAMA:
 while jugarOtra==True:
 	Ganador, nombreJugador, nivel, Tablero, Linea, q, p, JugadaPrimeraVez, turno = InicializarPartida(pantalla, PrimeraPartida, Ganador, N, M) 
@@ -729,7 +785,7 @@ while jugarOtra==True:
 
 	DesplegarGanador(nombreJugador, Ganador) 
 	Ganador0, Ganador1, Ganador2 = ContarGanadorPartida(Ganador, Ganador0, Ganador1, Ganador2)
-	PrimeraPartida, jugarOtra = otraPartida(Ganador0,Ganador1,Ganador2)  
+	PrimeraPartida, jugarOtra = otraPartida(Ganador0,Ganador1,Ganador2,Tablero)  
 
 DesplegarResultadoFinal(Ganador0, Ganador1, Ganador2) 
 pygame.quit()
