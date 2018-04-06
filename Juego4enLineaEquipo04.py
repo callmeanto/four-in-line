@@ -435,38 +435,35 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
 						elif Matrix[p][q]!=0:
 							q=random.randint(0,6)  
 					break                                                            #Se le coloca un break para salir del ciclo inicial
-				else:
+				else:                                     #Como ya no es la primera jugada, entonces procede a la estrategia
 					Linea=DeterminarLinea(N, M, Matrix, p, q, Linea)
-					if Linea==0:                              
-						q=q+1
+					if Linea==0:                          #En estas guardias ya escogio la linea que intentara construir                           
+						q=q+1                             #Linea 0 es linea horizontal hacia la derecha
+						Matrix[p][q]=2                    #Se aumenta q porque esta barriendo las columnas hacia adelante
+						pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
+					elif Linea==1:                        #Linea 1 es linea horizontal hacia la izquierda
+						q=q-1                             #Se disminuye q porque esta barriendo las columnas hacia atras
 						Matrix[p][q]=2
 						pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
-					elif Linea==1:
-						q=q-1
+					elif Linea==2:                        #Linea 2 es linea vertical
+						p=p-1                             #Se disminuye p porque esta barriendo las filas hacia arriba (va de 5 a 0)
 						Matrix[p][q]=2
 						pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
-					elif Linea==2:
-						p=p-1
-						Matrix[p][q]=2
+					elif Linea==3:                        #Linea 3 es linea diagonal derecha
+						p,q=p-1,q+1                       #p decrece porque se barren las filas hacia arriba y q crece porque
+						Matrix[p][q]=2                    #se desplaza hacia la derecha
 						pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
-					elif Linea==3:
-						p,q=p-1,q+1
-						Matrix[p][q]=2
-						pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
-					elif Linea==4:
-						p,q=p-1,q-1
-						Matrix[p][q]=2
-						pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
-					elif Linea==5:  
-						Valida=False
+					elif Linea==4:                        #Linea 4 es linea diagonal izquierda
+						p,q=p-1,q-1                       #ambos decrecen porque se barren las filas hacia arriba y las
+						Matrix[p][q]=2                    #columnas hacia atras
+						pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0) #pygame.draw dibuja el circulo
+					elif Linea==5:                        #Linea auxiliar que indica que no puede construir ninguna linea
+						Valida=False                      #a partir de la casilla donde esta
 						while Valida==False:
-							p,q=random.randint(0,N-1), random.randint(0,M-1)
-							Valida=DeterminarJugadaValida(N, M, Matrix, p, q) 
-							if Valida==False:
-								pass
-							elif Valida==True:       
-								Matrix[p][q]=2
-								pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
+							p,q=random.randint(0,N-1), random.randint(0,M-1)    #Como no puede seguir jugando alli, busca de manera
+							Valida=DeterminarJugadaValida(N, M, Matrix, p, q)   #aleatoria otra casilla donde pueda construir una linea       
+						Matrix[p][q]=2                                          #sale del ciclo porque Valida es True y ya puede ocupar la casilla
+						pygame.draw.circle(pantalla, AZUL, (ColumnaCirculo[q], FilaCirculo[p]), 25, 0)
 				break                                                                  #Se le coloca un break para salir del ciclo inicial
 
 		#Tablero Grafico 
