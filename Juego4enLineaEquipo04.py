@@ -482,13 +482,15 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
         print("Juega la pc")
         # NIVEL BÁSICO
         if nivel==1:
-            JugadaColumnaCPU=random.randint(0,6)        #Como es el nivel basico, se hace un random entre 0 y 6 (las posibles columnas)
-            Fila=ValidarJugada(Matrix,JugadaColumnaCPU) #Y llama al proc ValidarJugada a ver si hay casillas vacias en esa col 
-                                                  #Si Fila es -1 es porque no hay casillas libres, entonces repite el proceso
-            if Fila != -1:                                   #Como hay una casilla vacia entonces asigna 2 en la casilla y dibuja el circulo
-                time.sleep(0.3)                     #Esperara 0.3 segundos antes de ejecutar la jugada
-                DibujarCirculo(JugadaColumnaCPU,Fila,turno)
-                Matrix[Fila][JugadaColumnaCPU]=2
+            while True:
+                JugadaColumnaCPU=random.randint(0,6)        #Como es el nivel basico, se hace un random entre 0 y 6 (las posibles columnas)
+                Fila=ValidarJugada(Matrix,JugadaColumnaCPU) #Y llama al proc ValidarJugada a ver si hay casillas vacias en esa col 
+                                                      #Si Fila es -1 es porque no hay casillas libres, entonces repite el proceso
+                if Fila != -1:                                   #Como hay una casilla vacia entonces asigna 2 en la casilla y dibuja el circulo
+                    time.sleep(0.3)                     #Esperara 0.3 segundos antes de ejecutar la jugada
+                    DibujarCirculo(JugadaColumnaCPU,Fila,turno)
+                    Matrix[Fila][JugadaColumnaCPU]=2
+                    break
         # NIVEL MEDIO
         elif nivel==2:
             time.sleep(0.3)                      #Esperara 0.3 segundos antes de ejecutar la jugada
@@ -519,7 +521,7 @@ def ObtenerJugada(JugadaColumnaJugador:int, nivel:int, turno:int, nombreJugador:
                     Matrix[p][q]=2                    #columnas hacia atras
                 elif Linea==5:                        #Linea auxiliar que indica que no puede construir ninguna linea
                     Valida=False                      #a partir de la casilla donde esta
-                    while Valida==False:
+                    while not Valida:
                         p,q=random.randint(0,N-1), random.randint(0,M-1)    #Como no puede seguir jugando alli, busca de manera
                         Valida=DeterminarJugadaValida(N, M, Matrix, p, q)   #aleatoria otra casilla donde pueda construir una linea       
                 Matrix[p][q]=2                                          #sale del ciclo porque Valida es True y ya puede ocupar la casilla
@@ -539,29 +541,6 @@ def DeterminarLinea(N:int, M:int, Matrix:int, p:int, q:int, Linea:int) -> int:
     """
     #Precondicion:
     assert(0<=Linea<=5 and N>0 and M>0) 
-    """"
-    if q+3<=6 and Matrix[p][q+1]==0 and Matrix[p][q+2]==0 and Matrix[p][q+3]==0  :   
-    #Si hay 3 casillas libres a su derecha, intenta construir la linea 0
-        Linea=0
-    elif 0<=q-3 and Matrix[p][q-1]==0 and Matrix[p][q-2]==0 and Matrix[p][q-3]==0 : 
-    #Si hay 3 casillas libres a su izqda, intenta construir la linea 1
-        Linea=1
-    elif 0<=p-3 and Matrix[p-1][q]==0 and Matrix[p-2][q]==0 and Matrix[p-3][q]==0  : 
-    #Si hay 3 casillas libres hacia arriba, intenta construir la linea 1
-        Linea=2
-    elif q+3<=6 and 0<=p-3 and Matrix[p-1][q+1]==0 and Matrix[p-2][q+2]==0 and Matrix[p-3][q+3]==0 : 
-    #Si hay 3 casillas libres diagonal derecha, intenta construir la linea 1
-        Linea=3
-    elif 0<=q-3 and 0<=p-3 and Matrix[p-1][q-1]==0 and Matrix[p-2][q-2]==0 and Matrix[p-3][q-3]==0 : 
-    #Si hay 3 casillas libres diagonal izqda, intenta construir la linea 1
-        Linea=4
-    else:
-        Linea=5        
-
-    if 0<=Linea<=4:
-        Linea=random.randint(0,4)
-        return Linea
-    else: return Linea  """
 
     #VAR Valida0, Valida1, Valida2, Valida3, Valida4, SigueFila :bool  
 
@@ -603,6 +582,7 @@ def DeterminarLinea(N:int, M:int, Matrix:int, p:int, q:int, Linea:int) -> int:
             Linea=5
 
     return Linea
+    
 # PROCEDIMIENTO PARA DETERMINAR JUGADA VALIDA DEL COMPUTADOR
 def DeterminarJugadaValida (N:int, M:int, Matrix:int, i:int, j:int) -> bool:
     #Precondicion: N>0 and M>0
