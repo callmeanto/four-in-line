@@ -7,7 +7,7 @@
 # Autores: Pietro Iaia
 #          Antonella Requena
 #
-# Última fecha de modificación: 04/04/2018
+# Última fecha de modificación: 06/04/2018
 
 
 # Librerías a importar
@@ -843,7 +843,6 @@ reloj = pygame.time.Clock()
 # nivel: int                       // ENTRADA: guarda el nivel que desea jugar el usuario
 # Tablero:array[0..N)[0..M)of int  // Variable usada para contener la matriz del tablero (posiciones jugadas)
 # TableroG:array[0..N)[0..M)of int // Variable usada para contener llenar la matriz del tablero que quedo de la partida anterior
-# i: int                           // Variable de la fila en la que juega el usuario (usada para verificar si la jugada es valida)
 # turno: int                       // Variable del turno de los jugadores, vale 1 si el turno es del usuario y 2 si es del CPU. 
 #                                  // Cambia una vez que pasa por el ciclo (que se obtiene la jugada)
 # JugadaPrimeraVez: bool           // Variable usada para ver si el CPU en el nivel medio ya jugo por primera vez
