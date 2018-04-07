@@ -269,18 +269,20 @@ def otraPartida(Ganador0:int,Ganador1:int,Ganador2:int,Matrix:[int]) -> (bool,bo
 
     while True:
         y=str(input("Si o No?"+'\n'))
-        if y=="Si":
+        y=y.lower() 
+        if y=="si":
             jugarOtra=True                              #Si se escoge Si, empieza el ciclo denuevo, si se escoge que No se le pedira si desea
             break                                       #Guardar la partida
-        elif y=="No": 
+        elif y=="no": 
             print("¿Desea Guardar su partida?")
             while True:
                 Respuesta=str(input("Si o No?"+'\n'))
-                if Respuesta=="Si":
+                Respuesta=Respuesta.lower()
+                if Respuesta=="si":
                     siguePartida=0
                     GuardarArchivo(Matrix,Ganador0,Ganador1,Ganador2,siguePartida)         
                     break   
-                elif Respuesta=="No":                     
+                elif Respuesta=="no":                     
                     break                                     
                 else:
                     print("Solo se puede ingresar Si o No")       #Si se escribe algo mas que 'Si' o 'No' le avisa que solo puede escoger entre esos dos
@@ -292,7 +294,7 @@ def otraPartida(Ganador0:int,Ganador1:int,Ganador2:int,Matrix:[int]) -> (bool,bo
             continue                                                     #Se le avisara que solo puede escoger entre Si o No
 
     #Postcondicion
-    assert((jugarOtra==True and y=="Si") or (jugarOtra==False and y=="No"))
+    assert((jugarOtra==True and y=="si") or (jugarOtra==False and y=="no"))
 
     return PrimeraPartida, jugarOtra
         
@@ -440,6 +442,7 @@ def seguirJugando(turno:int, primeraJugadaUsuario:bool,Ganador0:int,Ganador1:int
             print("¿Desea seguir jugando?")
             while True:
                 y=input("si o no? ")
+                y=y.lower()
                 try:
                     assert(y=="si" or y=="no")
                     break
@@ -685,7 +688,7 @@ def DeterminarJugadaValida (N:int, M:int, Matrix:int, i:int, j:int) -> bool:
         Valida=False
     
     #Postcondicion
-    assert((Matrix[i][j]==2 and Valida==True) or (Matrix[i][j]!=2 and Valida==False))
+    #assert((Matrix[i][j]==0 and Valida==True and i==5) or (Matrix[i][j]==0 and Valida==True and Matrix[i+1][j]!=0) or (Matrix[i][j]==0 and Valida==False and Matrix[i+1][j]==0) or (Matrix[i][j]!=0 and Valida==False))
     return Valida
 
 # PROCEDIMIENTO PARA RESALTAR LA LINEA GANADORA 
@@ -733,14 +736,13 @@ def DesplegarResultadoFinal(Ganador0:int, Ganador1:int, Ganador2:int) -> 'Void':
     assert(True)
 
 # PROCEDIMIENTO PARA CONTAR EL GANADOR POR PARTIDA
-def ContarGanadorPartida(Ganador:int) -> int:
+def ContarGanadorPartida(Ganador:int,Ganador0:int,Ganador1:int,Ganador2:int) -> int:
     #Este procedimiento es un contador que recibe al ganador de la partida actual
     #y si es 0, a ganador0 (empate) le suma 1 y asi sucesivamente con cada ganador.
     #retorna estos contadores
 
     #Precondicion: 
     assert(0<=Ganador<=2)
-
     if Ganador==0:
         Ganador0=Ganador0+1
     elif Ganador==1:
@@ -753,7 +755,7 @@ def ContarGanadorPartida(Ganador:int) -> int:
     return Ganador0, Ganador1, Ganador2
 
 # PROCEDIMIENTO PARA REANUDAR LA PARTIDA
-def Reanudar() -> (int,int,int,[[int]]) -> (int, int,int,[[int]],bool):
+def Reanudar() -> (int, int,int,[[int]],bool):
     #Descripcion: Este procedimiento busca si existe un archivo save.txt, de ser
     #asi, le pregunta al jugador si desea seguir jugando la partida anterior, porque
     #esto indica que hay una partida guardada
@@ -765,10 +767,11 @@ def Reanudar() -> (int,int,int,[[int]]) -> (int, int,int,[[int]],bool):
         print("¿Desea cargar la partida?")
         while True:
             Respuesta=str(input("Si o No?"))
-            if Respuesta=="Si":
+            Respuesta=Respuesta.lower()
+            if Respuesta=="si":
                 Guardado=True
                 break
-            elif Respuesta=="No":
+            elif Respuesta=="no":
                 Guardado=False
                 break
             else:
@@ -790,6 +793,18 @@ def Reanudar() -> (int,int,int,[[int]]) -> (int, int,int,[[int]],bool):
                     Matrix.append(list(map(int,file.readline().rstrip().split(" "))))  #se recorre la matriz y se le asigna los valores que tiene la lista
                                                                                        #del archivo, map lo que hace es convertir los strings del archivo en enteros
     return Ganador0, Ganador1, Ganador2,Matrix,Guardado                                #para poder asignarselos a la matriz
+
+
+def Bienvenida() -> 'void':
+    print('\n'+"******************************************************************************************")
+    print("*                                       BIENVENIDO                                       *")
+    print("*                                      FOUR IN LINE                                      *")
+    print("*                                        Equipo 04                                       *")
+    print("******************************************************************************************")
+    print("CONTROLES: " +'\n'+ "Mouse: seleccionas la columna deseada haciendo click del mouse hasta la posicion que desees")
+    print("Barra Espaciadora: Al presionarla, se coloca la ficha"+'\n '+ "(ADVERTENCIA: No presionar luego de terminada la partida o jugara por usted si desea volver a jugar)")
+    print('\n'+"Ficha azul: Ficha del computador")
+    print('\n'+"Ficha blanca: Ficha del Jugador"+'\n')
 
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -856,7 +871,9 @@ jugarOtra, PrimeraPartida=True,True
 Ganador0, Ganador1, Ganador2=0,0,0
 Tablero=[]
 
-Ganador0,Ganador1,Ganador2,TableroG,Guardado = Reanudar() 
+Bienvenida()
+Ganador0,Ganador1,Ganador2,TableroG,Guardado = Reanudar()
+
 # CICLO PRINCIPAL DEL PROGRAMA:
 while jugarOtra:
     Ganador, nombreJugador, nivel, Tablero, Linea, q, p, JugadaPrimeraVez, turno = InicializarPartida(pantalla, PrimeraPartida, Ganador, N, M) 
@@ -878,10 +895,8 @@ while jugarOtra:
         turno = CambiarTurno(turno)    
 
     DesplegarGanador(nombreJugador, Ganador) 
-    Ganador0, Ganador1, Ganador2 = ContarGanadorPartida(Ganador)
+    Ganador0, Ganador1, Ganador2 = ContarGanadorPartida(Ganador,Ganador0,Ganador1,Ganador2)
     PrimeraPartida, jugarOtra = otraPartida(Ganador0,Ganador1,Ganador2,Tablero)
     TableroG = []
-
 DesplegarResultadoFinal(Ganador0, Ganador1, Ganador2) 
 pygame.quit()
-
