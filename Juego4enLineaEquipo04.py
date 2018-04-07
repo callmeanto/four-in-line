@@ -681,6 +681,18 @@ def Reanudar() -> (int,int,int,[[int]]):
     return Ganador0, Ganador1, Ganador2,Matrix,Guardado
 
 
+def Bienvenida() -> 'void':
+    print("*************************************************************************************************************")
+    print("*                                            BIENVENIDO                                                     *")
+    print("*                                           FOUR IN LINE                                                    *")
+    print("*                                             Equipo 04                                                     *")
+    print("*************************************************************************************************************")
+    print("CONTROLES: \n Mouse: seleccionas la columna deseada haciendo click del mouse hasta la posicion que desees")
+    print(" Barra Espaciadora: Al precionarla, se coloca la ficha \n  (ADVERTENCIA: No precionar luego de terminada la partida o jugara por usted si desea volver a jugar)")
+    print("\nFicha azul: Ficha del computador")
+    print("Ficha blanca: Ficha del Jugador\n")
+
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
 #                                 ALGORITMO PRINCIPAL                                   #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
@@ -744,6 +756,7 @@ jugarOtra, PrimeraPartida=True,True
 Ganador0, Ganador1, Ganador2=0,0,0
 Tablero=[]
 
+Bienvenida()
 Ganador0,Ganador1,Ganador2,TableroG,Guardado = Reanudar()
 # CICLO PRINCIPAL DEL PROGRAMA:
 while jugarOtra:
